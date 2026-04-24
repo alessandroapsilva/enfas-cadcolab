@@ -3,6 +3,12 @@ ob_start();
 session_start();
 date_default_timezone_set('America/Sao_Paulo');
 ini_set('display_errors', 0); error_reporting(0); mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
+// === CONTROLE DE VERSÃO DO SISTEMA (Altere aqui a cada atualização) ===
+define('SYS_VERSION', 'v1.0.0');
+define('SYS_UPDATE', '23 Abr 2026');
+// =====================================================================
+
 require_once '../../autoatendimento/config/database.php';
 $conn->query("SET time_zone = '-03:00'");
 
@@ -430,7 +436,7 @@ if(isset($_POST['action'])){
         [data-theme="dark"] { --bg-body: #121212; --bg-card: #1e1e1e; --text-primary: #f8fafc; --text-muted: #94a3b8; --border-color: #334155; --table-bg: #1e1e1e; }
         body { background: var(--bg-body); color: var(--text-primary); font-family: 'Segoe UI',sans-serif; margin: 0; display: flex; min-height: 100vh; transition: background 0.3s; overflow-x: hidden;}
         
-        .sidebar { width: 260px; background: #0f172a; position: fixed; height: 100vh; padding: 20px 15px; overflow-y: auto; z-index:1000;}
+        .sidebar { width: 260px; background: #0f172a; position: fixed; height: 100vh; padding: 20px 15px; overflow-y: auto; z-index:1000; display: flex; flex-direction: column;}
         .main-wrapper { margin-left: 260px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; transition: 0.3s; max-width: calc(100% - 260px);}
         
         .topbar { background: var(--bg-card); height: 70px; display: flex; align-items: center; justify-content: space-between; padding: 0 30px; border-bottom: 1px solid var(--border-color); }
@@ -440,7 +446,6 @@ if(isset($_POST['action'])){
         
         .table-card { background: var(--bg-card); border-radius: 12px; padding: 25px; border: 1px solid var(--border-color); box-shadow: 0 4px 6px rgba(0,0,0,0.02); margin-bottom: 25px; }
         
-        /* Tabela Normal sem larguras fixas - Responsiva e Limpa */
         .table { color: var(--text-primary); background: var(--table-bg); margin-bottom:0; width: 100%; }
         .table th { border-bottom: 2px solid var(--border-color); color: var(--text-muted); text-transform: uppercase; font-size: 11px; padding: 12px 10px; background: var(--table-bg); font-weight: 600; letter-spacing: 0.5px;}
         .table td { border-bottom: 1px solid var(--border-color); padding: 12px 10px; vertical-align: middle; background: var(--table-bg); color: var(--text-primary); font-size: 13px;}
@@ -456,8 +461,7 @@ if(isset($_POST['action'])){
         .bg-gradient-yellow { background: linear-gradient(135deg, #78350f 0%, #f59e0b 100%); }
         .bg-gradient-red { background: linear-gradient(135deg, #7f1d1d 0%, #ef4444 100%); }
         
-        /* Botões Lineares - Todos numa linha só */
-        .btn-action { background: transparent; border: 1px solid var(--border-color); border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; color: var(--text-primary); font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .btn-action { background: transparent; border: 1px solid var(--border-color); border-radius: 50%; width: 30px; height: 30px; display: inline-flex; align-items: center; justify-content: center; text-decoration: none; color: var(--text-primary); font-size: 12px; cursor: pointer; transition: 0.2s; margin-left: 3px; margin-bottom: 3px;}
         .btn-action:hover { background: var(--border-color); }
         
         .theme-toggle { cursor: pointer; font-size: 20px; color: var(--text-primary); margin-right: 20px; }
@@ -467,7 +471,6 @@ if(isset($_POST['action'])){
         .img-p { width:45px; height:45px; border-radius:50%; object-fit:cover; border:2px solid var(--border-color); }
         .status-badge { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px; }
         
-        /* Scroll apenas em mobile, no desktop fica fixo */
         .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
         
         .btn-loading { pointer-events: none; opacity: 0.8; }
@@ -508,6 +511,11 @@ if(isset($_POST['action'])){
             </div>
         <?php endif; ?>
     </nav>
+    <div class="mt-auto mb-3 text-center border-top border-secondary pt-3" style="opacity: 0.7;">
+        <span class="badge bg-dark border border-secondary text-secondary" style="font-size: 10px;">
+            CadColab <?=SYS_VERSION?><br><?=SYS_UPDATE?>
+        </span>
+    </div>
 </div>
 <div class="main-wrapper">
     <div class="topbar">
@@ -566,10 +574,9 @@ if(isset($_POST['action'])){
                     </div>
                 </div>
             </div>
-            <div class="row g-4"><div class="col-md-7"><div class="table-card h-100"><h5 class="fw-bold mb-4" style="color:var(--text-primary); font-size:15px;"><i class="fa-solid fa-building me-2"></i>Lotação por Unidade</h5><div style="height:300px; position:relative;"><canvas id="chartUnidade"></canvas></div></div></div><div class="col-md-5"><div class="table-card h-100"><h5 class="fw-bold mb-4" style="color:var(--text-primary); font-size:15px;"><i class="fa-solid fa-chart-pie me-2"></i>Distribuição por Status</h5><div style="height:300px; position:relative;"><canvas id="chartStatus"></canvas></div></div></div></div>
+            <div class="row g-4"><div class="col-md-7"><div class="table-card h-100"><h5 class="fw-bold mb-4" style="color:var(--text-primary); font-size:15px;"><i class="fa-solid fa-building me-2"></i>Lotação por Unidade</h5><div style="height:300px; position:relative;"><canvas id="chartUnidade"></canvas></div></div></div><div class="col-md-5"><div class="table-card h-100"><h5 class="fw-bold mb-4" style="color:var(--text-primary); font-size:15px;"><i class="fa-solid fa-shield-halved me-2"></i>Últimos Eventos</h5><div class="table-responsive" style="max-height: 250px;"><table class="table table-hover" style="font-size:12px; min-width:unset;"><tbody><?php $logs=$conn->query("SELECT * FROM logs_auditoria ORDER BY id DESC LIMIT 5"); if($logs){ while($l=$logs->fetch_assoc()): ?><tr><td style="color:var(--text-muted); padding: 8px 5px;"><?=date('d/m', strtotime($l['data_hora']))?></td><td style="padding: 8px 5px;"><b class="text-primary"><?=$l['acao']?></b></td><td style="padding: 8px 5px; text-align:right;"><span class="badge bg-secondary border text-white" style="font-size:10px;"><?=$l['usuario_admin']?></span></td></tr><?php endwhile; } ?></tbody></table></div></div></div></div>
             <script>
                 new Chart(document.getElementById('chartUnidade'),{type:'doughnut',data:{labels:<?=json_encode($graf_unid['labels']??[])?>,datasets:[{data:<?=json_encode($graf_unid['data']??[])?>,backgroundColor:['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6']}]},options:{responsive:true,maintainAspectRatio:false,cutout:'75%',plugins:{legend:{position:'bottom', labels: {boxWidth: 12, font: {size: 11}}}}}});
-                new Chart(document.getElementById('chartStatus'),{type:'doughnut',data:{labels:<?=json_encode($graf_status['labels']??[])?>,datasets:[{data:<?=json_encode($graf_status['data']??[])?>,backgroundColor:['#10b981','#f59e0b','#ef4444','#64748b','#334155']}]},options:{responsive:true,maintainAspectRatio:false,cutout:'75%',plugins:{legend:{position:'bottom', labels: {boxWidth: 12, font: {size: 11}}}}}});
             </script>
         
         <?php elseif($p == 'status' && $isTI): ?>
@@ -663,7 +670,7 @@ if(isset($_POST['action'])){
             
             <div class="table-card table-responsive">
                 <table class="table table-hover align-middle">
-                <thead><tr><th>Colaborador</th><th>Lotação e Admissão</th><th>Acesso Corporativo</th><th>Status</th><th class="text-end">Ações</th></tr></thead>
+                <thead><tr><th>Colaborador</th><th>Lotação e Admissão</th><th>Acesso Corporativo</th><th>Status</th><th class="text-end" style="min-width: 140px;">Ações</th></tr></thead>
                 <tbody>
                 <?php $b = $conn->real_escape_string($_GET['busca'] ?? ''); $w = $b ? "WHERE nome_completo LIKE '%$b%' OR cpf LIKE '%$b%' OR matricula LIKE '%$b%'" : ""; $c=$conn->query("SELECT pr.*, c.nome as crg, u.nome as un, s.nome as seto FROM pre_registros pr LEFT JOIN cargos c ON pr.cargo_id=c.id LEFT JOIN unidades u ON pr.unidade_id=u.id LEFT JOIN setores s ON pr.setor_id=s.id $w ORDER BY pr.id DESC"); $hoje = date('Y-m-d'); if($c){ while($r=$c->fetch_assoc()): $id_exibicao = !empty($r['public_id']) ? $r['public_id'] : str_pad($r['id'], 6, '0', STR_PAD_LEFT); $em_ferias = false; if(!empty($r['ferias_inicio']) && $r['ferias_inicio'] != '0000-00-00' && !empty($r['ferias_fim']) && $r['ferias_fim'] != '0000-00-00'){ if($hoje >= $r['ferias_inicio'] && $hoje <= $r['ferias_fim']){ $em_ferias = true; } } $idade = '-'; if(!empty($r['data_nascimento']) && $r['data_nascimento'] != '0000-00-00') { $idade = (new DateTime($hoje))->diff(new DateTime($r['data_nascimento']))->y . ' anos'; } $nascimento_fmt = (!empty($r['data_nascimento']) && $r['data_nascimento'] != '0000-00-00') ? date('d/m/Y', strtotime($r['data_nascimento'])) : '-'; ?>
                     <tr>
@@ -704,22 +711,22 @@ if(isset($_POST['action'])){
                             <span class="badge bg-<?=$bc?>-subtle text-<?=$bc?> border border-<?=$bc?> px-2"><?=strtoupper($r['status'])?></span>
                             <?php if($em_ferias): ?><br><span class="badge bg-info text-dark mt-1"><i class="fa-solid fa-umbrella-beach"></i> EM FÉRIAS</span><?php endif; ?>
                         </td>
-                        <td class="text-end" style="white-space: nowrap;">
-                            <div class="d-flex gap-1 justify-content-end align-items-center">
+                        <td class="text-end">
+                            <div class="d-flex flex-wrap justify-content-end" style="gap: 3px; max-width: 140px; margin-left: auto;">
                                 <?php if($isRH): ?>
-                                    <form method="POST" class="d-inline" id="form_status_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');">
+                                    <form method="POST" id="form_status_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');">
                                         <input type="hidden" name="id" value="<?=$r['id']?>"><input type="hidden" name="action" value="change_status"><input type="hidden" name="status" id="status_val_<?=$r['id']?>" value="">
                                         <button type="button" class="btn-action text-secondary" onclick="confirmStatus(<?=$r['id']?>, '<?=$r['status']?>')" title="Alterar Status Rápido"><i class="fa-solid fa-user-tag"></i></button>
                                     </form>
                                 <?php endif; ?>
                                 <?php if($isTI && !empty($r['username_criado'])): ?>
-                                    <form method="POST" class="d-inline" id="form_sig_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');"><input type="hidden" name="id" value="<?=$r['id']?>"><input type="hidden" name="action" value="sync_assinatura"><button type="button" class="btn-action text-info" onclick="confirmSignature(<?=$r['id']?>)" title="Sincronizar Assinatura M365"><i class="fa-solid fa-pen-nib"></i></button></form>
+                                    <form method="POST" id="form_sig_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');"><input type="hidden" name="id" value="<?=$r['id']?>"><input type="hidden" name="action" value="sync_assinatura"><button type="button" class="btn-action text-info" onclick="confirmSignature(<?=$r['id']?>)" title="Sincronizar Assinatura M365"><i class="fa-solid fa-pen-nib"></i></button></form>
                                 <?php endif; ?>
                                 <a href="?p=cracha&id=<?=$r['id']?>" target="_blank" class="btn-action text-dark" title="Crachá"><i class="fa-solid fa-id-badge"></i></a>
                                 <a href="?p=ficha&id=<?=$r['id']?>" target="_blank" class="btn-action text-primary" title="Ficha A4"><i class="fa-solid fa-file-lines"></i></a>
-                                <?php if($isTI): ?><form method="POST" class="d-inline" id="form_reset_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');"><input type="hidden" name="id" value="<?=$r['id']?>"><input type="hidden" name="action" value="reset_senha"><button type="button" class="btn-action text-warning" onclick="confirmReset(<?=$r['id']?>)" title="Reset Senha"><i class="fa-solid fa-lock-open"></i></button></form><?php endif; ?>
+                                <?php if($isTI): ?><form method="POST" id="form_reset_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');"><input type="hidden" name="id" value="<?=$r['id']?>"><input type="hidden" name="action" value="reset_senha"><button type="button" class="btn-action text-warning" onclick="confirmReset(<?=$r['id']?>)" title="Reset Senha"><i class="fa-solid fa-lock-open"></i></button></form><?php endif; ?>
                                 <button class="btn-action text-primary" data-json="<?=base64_encode(json_encode($r))?>" onclick="editarColab(this)" title="Editar Ficha Completa"><i class="fa-solid fa-pen"></i></button>
-                                <form method="POST" class="d-inline" id="form_del_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');"><input type="hidden" name="id" value="<?=$r['id']?>"><input type="hidden" name="table" value="pre_registros"><input type="hidden" name="action" value="delete"><button type="button" class="btn-action text-danger" onclick="confirmDelete(<?=$r['id']?>)" title="Excluir Colaborador"><i class="fa-solid fa-trash"></i></button></form>
+                                <form method="POST" id="form_del_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');"><input type="hidden" name="id" value="<?=$r['id']?>"><input type="hidden" name="table" value="pre_registros"><input type="hidden" name="action" value="delete"><button type="button" class="btn-action text-danger" onclick="confirmDelete(<?=$r['id']?>)" title="Excluir Colaborador"><i class="fa-solid fa-trash"></i></button></form>
                             </div>
                         </td>
                     </tr>
@@ -730,7 +737,7 @@ if(isset($_POST['action'])){
             
         <?php elseif(in_array($p, ['unidades','setores','cargos','perfis','sistemas', 'usuarios'])): $t = $p; if($p == 'sistemas') $t = 'sistemas_hc'; if($p == 'perfis') $t = 'perfis_acesso'; if($p == 'usuarios') $t = 'usuarios_admin'; $titulo = ucfirst($p); ?>
             <div class="d-flex justify-content-between mb-4"><h4><?=$titulo?></h4><button class="btn btn-primary fw-bold shadow-sm" onclick="<?=($p=='cargos'?'openCargo()':($p=='perfis'?'openPerfil()':"openGeneric('$t')"))?>"><i class="fa-solid fa-plus me-1"></i> Novo Registro</button></div>
-            <div class="table-card table-responsive"><table class="table align-middle"><thead><tr><th>ID</th><th>Descrição</th><th class="text-end">Ações</th></tr></thead><tbody><?php $query = ($p=='cargos') ? "SELECT c.*, p.nome as perfil FROM cargos c LEFT JOIN perfis_acesso p ON c.perfil_id=p.id" : "SELECT * FROM $t"; $l=$conn->query($query); if($l){ while($r=$l->fetch_assoc()): ?><tr><td><span class="badge bg-secondary font-monospace text-white">#<?=$r['id']?></span></td><td><b><?=htmlspecialchars($r['nome'] ?? $r['usuario'])?></b> <?php if(isset($r['email'])) echo "<div class='small mt-1' style='color:var(--text-muted);'><i class='fa-solid fa-envelope me-1'></i>".htmlspecialchars($r['email'])." <span class='badge bg-primary-subtle text-primary border ms-2'>".htmlspecialchars($r['perfil'])."</span></div>"; ?></td><td class="text-end" style="white-space: nowrap;"><div class="d-flex justify-content-end align-items-center"><button class="btn-action text-primary" data-json='<?=base64_encode(json_encode($r))?>' onclick="<?=($p=='cargos'?'editCargo(this)':($p=='perfis'?'editPerfil(this)':"editGeneric('$t', this)"))?>"><i class="fa-solid fa-pen"></i></button><form method="POST" class="d-inline" id="form_del_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');"><input type="hidden" name="id" value="<?=$r['id']?>"><input type="hidden" name="table" value="<?=$t?>"><input type="hidden" name="action" value="delete"><button type="button" class="btn-action text-danger" onclick="confirmDelete(<?=$r['id']?>)"><i class="fa-solid fa-trash"></i></button></form></div></td></tr><?php endwhile; } ?></tbody></table></div>
+            <div class="table-card table-responsive"><table class="table align-middle"><thead><tr><th>ID</th><th>Descrição</th><th class="text-end">Ações</th></tr></thead><tbody><?php $query = ($p=='cargos') ? "SELECT c.*, p.nome as perfil FROM cargos c LEFT JOIN perfis_acesso p ON c.perfil_id=p.id" : "SELECT * FROM $t"; $l=$conn->query($query); if($l){ while($r=$l->fetch_assoc()): ?><tr><td><span class="badge bg-secondary font-monospace text-white">#<?=$r['id']?></span></td><td><b><?=htmlspecialchars($r['nome'] ?? $r['usuario'])?></b> <?php if(isset($r['email'])) echo "<div class='small mt-1' style='color:var(--text-muted);'><i class='fa-solid fa-envelope me-1'></i>".htmlspecialchars($r['email'])." <span class='badge bg-primary-subtle text-primary border ms-2'>".htmlspecialchars($r['perfil'])."</span></div>"; ?></td><td class="text-end"><div class="d-flex gap-1 justify-content-end"><button class="btn-action text-primary" data-json='<?=base64_encode(json_encode($r))?>' onclick="<?=($p=='cargos'?'editCargo(this)':($p=='perfis'?'editPerfil(this)':"editGeneric('$t', this)"))?>"><i class="fa-solid fa-pen"></i></button><form method="POST" id="form_del_<?=$r['id']?>" onsubmit="this.querySelector('button').classList.add('btn-loading');"><input type="hidden" name="id" value="<?=$r['id']?>"><input type="hidden" name="table" value="<?=$t?>"><input type="hidden" name="action" value="delete"><button type="button" class="btn-action text-danger" onclick="confirmDelete(<?=$r['id']?>)"><i class="fa-solid fa-trash"></i></button></form></div></td></tr><?php endwhile; } ?></tbody></table></div>
             
         <?php elseif($p == 'configuracoes' && $isTI): ?>
             <div class="d-flex justify-content-between align-items-center mb-4"><h4><i class="fa-solid fa-gears text-primary me-2"></i> Configurações Gerais</h4></div>
