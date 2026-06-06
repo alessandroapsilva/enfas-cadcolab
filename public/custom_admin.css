@@ -1,0 +1,11 @@
+.table-card .text-end .d-flex { justify-content: flex-end !important; gap: 8px !important; }
+.btn-action { display: inline-flex !important; align-items: center !important; justify-content: center !important; width: 34px !important; height: 34px !important; border-radius: 8px !important; border: none !important; transition: all 0.3s ease !important; background: #f8f9fa; }
+.btn-action.text-primary { color: #0d6efd !important; background: rgba(13,110,253,0.1); }
+.btn-action.text-primary:hover { background: #0d6efd !important; color: #fff !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(13,110,253,0.3); }
+.btn-action.text-danger { color: #dc3545 !important; background: rgba(220,53,69,0.1); }
+.btn-action.text-danger:hover { background: #dc3545 !important; color: #fff !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(220,53,69,0.3); }
+.badge-status-ativo { background: linear-gradient(135deg, #198754, #146c43) !important; color: #fff !important; padding: 6px 12px !important; border-radius: 20px !important; font-weight: bold; border: none !important; display: inline-block; font-size: 11px; }
+.badge-status-pendente { background: linear-gradient(135deg, #ffc107, #d39e00) !important; color: #000 !important; padding: 6px 12px !important; border-radius: 20px !important; font-weight: bold; border: none !important; display: inline-block; font-size: 11px; }
+.modal-content { border: none !important; border-radius: 15px !important; overflow: hidden !important; box-shadow: 0 10px 40px rgba(0,0,0,0.2) !important; }
+.modal-content h5 { background: linear-gradient(135deg, #0d6efd, #0b5ed7) !important; color: #fff !important; padding: 20px 25px !important; margin: -24px -24px 25px -24px !important; font-weight: 800 !important; display: flex !important; align-items: center !important; border-bottom: 3px solid #0a58ca !important; }
+.modal-content h5 i { color: #ffc107 !important; margin-right: 12px !important; font-size: 22px !important; }
