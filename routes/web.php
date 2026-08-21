@@ -16,6 +16,7 @@ Route::middleware('admin.auth')->group(function () {
     Route::post('/acao', [AdminController::class, 'acaoRapida'])->name('admin.action');
     Route::match(['get', 'post'], '/logout', [AdminController::class, 'logout'])->name('logout');
     Route::post('/sync-assinatura', [AdminController::class, 'syncAssinatura']);
+    Route::post('/acao/sync-assinatura', [AdminController::class, 'syncAssinatura']);
 });
 
 Route::any('/Conta/Login', [AutoatendimentoController::class, 'index']);
