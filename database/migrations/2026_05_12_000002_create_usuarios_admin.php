@@ -18,16 +18,6 @@ return new class extends Migration {
                 $table->unsignedBigInteger('pre_registro_id')->nullable(); // Vinculo com Colaborador
                 $table->timestamps();
             });
-
-            // Injetar o usuário master automaticamente
-            DB::table('usuarios_admin')->insert([
-                'nome' => 'Alessandro Silva',
-                'email' => 'alessandro@enfas.com.br',
-                'usuario' => 'admin',
-                'senha' => Hash::make('Enfas@2026'),
-                'perfil' => 'TI',
-                'created_at' => now()
-            ]);
         }
     }
     public function down(): void {}
