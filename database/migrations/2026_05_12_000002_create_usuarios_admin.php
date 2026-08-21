@@ -2,8 +2,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 
 return new class extends Migration {
     public function up(): void {
@@ -14,7 +12,7 @@ return new class extends Migration {
                 $table->string('email')->nullable();
                 $table->string('usuario')->unique();
                 $table->string('senha');
-                $table->string('perfil')->default('Operador'); // TI, RH, Admin
+                $table->string('perfil')->default('Operador'); // TI, RH, Gestor, Operador, Consulta
                 $table->unsignedBigInteger('pre_registro_id')->nullable(); // Vinculo com Colaborador
                 $table->timestamps();
             });
