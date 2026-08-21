@@ -21,6 +21,10 @@ class AdminAuthenticationService
                 if ($identity) {
                     return $this->syncLdapUser($identity);
                 }
+
+                if (! env('LOCAL_AUTH_FALLBACK', false)) {
+                    return null;
+                }
             } catch (RuntimeException $exception) {
                 report($exception);
                 if (! env('LOCAL_AUTH_FALLBACK', false)) {
