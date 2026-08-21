@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\{DB, Schema, Hash, Artisan};
 use Carbon\Carbon;
 use Illuminate\Support\Str;
+use App\Services\AdminAuthenticationService;
+use RuntimeException;
 
 class AdminController extends Controller {
 
@@ -144,16 +146,45 @@ class AdminController extends Controller {
         return ['sucesso'=>true];
     }
 
-    public function login(Request $request) {
+    public function login(Request $request, AdminAuthenticationService $authentication) {
         $cfg_global = DB::table('configuracoes')->pluck('valor', 'chave')->toArray();
-        if($request->isMethod('get')) return view('login', compact('cfg_global'));
-        if($request->u=='admin' && $request->p=='Enfas@2026') { session(['admin_logado'=>true, 'admin_perfil'=>'TI', 'admin_nome'=>'Administrador Master', 'admin_id'=>0]); return redirect('/dashboard'); }
-        $u = DB::table('usuarios_admin')->where('usuario', $request->u)->first();
-        if($u && Hash::check($request->p, $u->senha)){ session(['admin_logado'=>true, 'admin_perfil'=>$u->perfil, 'admin_nome'=>$u->nome, 'admin_id'=>$u->id]); return redirect('/dashboard'); } 
-        return back()->with('erro', 'Credenciais inválidas.');
+        if ($request->isMethod('get')) {
+            return view('login', compact('cfg_global'));
+        }
+
+        $credentials = $request->validate([
+            'u' => ['required', 'string', 'max:255'],
+            'p' => ['required', 'string', 'max:1024'],
+        ]);
+
+        try {
+            $user = $authentication->attempt(trim($credentials['u']), $credentials['p']);
+        } catch (RuntimeException $exception) {
+            return back()->withInput($request->only('u'))->with('erro', $exception->getMessage());
+        }
+
+        if (! $user) {
+            $this->registrarLog(trim($credentials['u']), 'LOGIN_NEGADO', 'Tentativa de autenticação recusada.');
+            return back()->withInput($request->only('u'))->with('erro', 'Credenciais inválidas.');
+        }
+
+        $request->session()->regenerate();
+        $request->session()->put([
+            'admin_logado' => true,
+            'admin_perfil' => $user->perfil,
+            'admin_nome' => $user->nome,
+            'admin_id' => $user->id,
+        ]);
+        $this->registrarLog($user->usuario, 'LOGIN_SUCESSO', 'Autenticação administrativa concluída.');
+
+        return redirect()->intended('/dashboard');
     }
 
-    public function logout() { session()->flush(); return redirect('/login'); }
+    public function logout(Request $request) {
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect('/login');
+    }
 
     public function index(Request $request) {
         if(!session('admin_logado')) return redirect('/login');
