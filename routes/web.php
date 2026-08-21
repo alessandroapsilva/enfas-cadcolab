@@ -1,18 +1,24 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AutoatendimentoController;
+use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect('/login');
+Route::redirect('/', '/login');
+
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AdminController::class, 'login'])->name('login');
+    Route::post('/login', [AdminController::class, 'login'])
+        ->middleware('throttle:login')
+        ->name('login.attempt');
 });
 
-Route::get('/dashboard', [AdminController::class, 'index']);
-Route::post('/acao', [AdminController::class, 'acaoRapida']);
-Route::get('/login', [AdminController::class, 'login']);
-Route::post('/login', [AdminController::class, 'login']);
-Route::get('/logout', [AdminController::class, 'logout']);
+Route::middleware('admin.auth')->group(function () {
+    Route::get('/dashboard', [AdminController::class, 'index'])->name('dashboard');
+    Route::post('/acao', [AdminController::class, 'acaoRapida'])->name('admin.action');
+    Route::post('/logout', [AdminController::class, 'logout'])->name('logout');
+    Route::post('/sync-assinatura', [AdminController::class, 'syncAssinatura']);
+});
 
 Route::any('/Conta/Login', [AutoatendimentoController::class, 'index']);
 Route::any('/Conta/Logout', [AutoatendimentoController::class, 'doLogout']);
@@ -22,10 +28,3 @@ Route::any('/User/ResetPassword', [AutoatendimentoController::class, 'index']);
 Route::any('/User/Validate', [AutoatendimentoController::class, 'index']);
 Route::any('/User/NewPassword', [AutoatendimentoController::class, 'index']);
 Route::any('/User/NewUser', [AutoatendimentoController::class, 'index']);
-Route::post('/sync-assinatura', [App\Http\Controllers\AdminController::class, 'syncAssinatura']);
-Route::post('/acao/sync-assinatura', function() {
-    return response()->json([
-        'success' => false,
-        'message' => '⚠️ Microsoft descontinuou a API de assinatura. Configure manualmente no Outlook Web.'
-    ]);
-});
