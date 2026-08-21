@@ -16,13 +16,13 @@ return new class extends Migration {
             $table->timestamp('last_login_at')->nullable()->after('auth_source');
         });
 
-        $admin = DB::table('usuarios_admin')->where('usuario', 'admin')->first();
-        if ($admin && Hash::check('Enfas@2026', $admin->senha)) {
-            DB::table('usuarios_admin')->where('id', $admin->id)->update([
-                'senha' => Hash::make(Str::random(64)),
-                'updated_at' => now(),
-            ]);
-        }
+        // Invalida a conta padrão histórica. Uma conta de contingência deve ser
+        // criada explicitamente com o comando cadcolab:admin.
+        DB::table('usuarios_admin')->where('usuario', 'admin')->update([
+            'usuario' => 'admin-desativado-'.Str::lower(Str::random(8)),
+            'senha' => Str::random(96),
+            'updated_at' => now(),
+        ]);
     }
 
     public function down(): void
