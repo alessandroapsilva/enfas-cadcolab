@@ -5,7 +5,7 @@ namespace Tests\Unit;
 use App\Http\Middleware\EnsureAdminAuthenticated;
 use Illuminate\Http\Request;
 use Illuminate\Session\Store;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 use Symfony\Component\HttpFoundation\Session\Storage\MockArraySessionStorage;
 
 class EnsureAdminAuthenticatedTest extends TestCase
