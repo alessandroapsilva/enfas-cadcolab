@@ -29,7 +29,8 @@ class AdminController extends Controller {
             if(empty($cfg['smtp_host']) || empty($cfg['smtp_user'])) { return @mail($to, $subject, $message, $headers_fallback); }
             
             $host = $cfg['smtp_host']; $port = (int)($cfg['smtp_port'] ?: 587); $user = $cfg['smtp_user']; $pass = $cfg['smtp_pass']; 
-            $verifyTls = filter_var(env('SMTP_VERIFY_TLS', true), FILTER_VALIDATE_BOOL);\n            $context = stream_context_create(['ssl' => [ 'verify_peer' => $verifyTls, 'verify_peer_name' => $verifyTls, 'allow_self_signed' => ! $verifyTls ]]);
+            $verifyTls = filter_var(env('SMTP_VERIFY_TLS', true), FILTER_VALIDATE_BOOL);
+            $context = stream_context_create(['ssl' => [ 'verify_peer' => $verifyTls, 'verify_peer_name' => $verifyTls, 'allow_self_signed' => ! $verifyTls ]]);
             $socket = @stream_socket_client(($port == 465 ? "ssl://" : "tcp://") . $host . ":" . $port, $errno, $errstr, 5, STREAM_CLIENT_CONNECT, $context);
             
             if (!$socket) { return @mail($to, $subject, $message, $headers_fallback); } 
