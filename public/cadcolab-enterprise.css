@@ -1,0 +1,70 @@
+/* CADCOLAB Enterprise enhancements — additive only */
+.uc-avatar{
+    width:64px !important;
+    height:64px !important;
+    min-width:64px !important;
+    max-width:64px !important;
+    border-radius:18px !important;
+    overflow:hidden !important;
+    border:1px solid var(--border-color) !important;
+    background:linear-gradient(135deg,rgba(0,162,232,.16),rgba(0,162,232,.03)) !important;
+    box-shadow:0 8px 24px rgba(0,0,0,.16) !important;
+}
+.uc-avatar img{
+    width:100% !important;
+    height:100% !important;
+    max-width:64px !important;
+    max-height:64px !important;
+    display:block !important;
+    object-fit:cover !important;
+    object-position:center top !important;
+    border-radius:0 !important;
+}
+#modalEdicao input[type="file"]{padding:.55rem .75rem !important;}
+#modalEdicao img[data-photo-preview],
+#modalEdicao .photo-preview img,
+#modalEdicao .foto-preview img{
+    width:120px !important;
+    height:120px !important;
+    max-width:120px !important;
+    max-height:120px !important;
+    object-fit:cover !important;
+    object-position:center top !important;
+    border-radius:18px !important;
+    border:1px solid var(--border-color) !important;
+}
+
+.cadcolab-enterprise-panel{
+    background:var(--bg-card);
+    border:1px solid var(--border-color);
+    border-radius:14px;
+    padding:24px;
+    margin:0 0 24px 0;
+    box-shadow:0 8px 28px rgba(0,0,0,.08);
+}
+.cadcolab-enterprise-panel .ce-header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:20px;}
+.cadcolab-enterprise-panel .ce-title{font-size:18px;font-weight:800;margin:0;color:var(--text-primary);}
+.cadcolab-enterprise-panel .ce-subtitle{font-size:12px;color:var(--text-muted);margin-top:4px;}
+.ce-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px;}
+.ce-stat{background:var(--bg-body);border:1px solid var(--border-color);border-radius:12px;padding:14px;}
+.ce-stat strong{display:block;font-size:22px;color:var(--text-primary);}
+.ce-stat span{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-muted);}
+.ce-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 10px;font-size:11px;font-weight:700;border:1px solid var(--border-color);}
+.ce-badge.ok{color:#10b981;border-color:rgba(16,185,129,.45);background:rgba(16,185,129,.08);}
+.ce-badge.warn{color:#f59e0b;border-color:rgba(245,158,11,.45);background:rgba(245,158,11,.08);}
+.ce-section-title{font-size:12px;text-transform:uppercase;letter-spacing:.9px;color:var(--text-muted);font-weight:800;margin:20px 0 10px;}
+.ce-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.ce-log-table{width:100%;font-size:12px;}
+.ce-log-table th{font-size:10px;text-transform:uppercase;color:var(--text-muted);border-bottom:1px solid var(--border-color);padding:10px 8px;}
+.ce-log-table td{padding:10px 8px;border-bottom:1px solid var(--border-color);vertical-align:top;color:var(--text-primary);}
+.ce-log-status{font-size:10px;font-weight:800;text-transform:uppercase;border-radius:999px;padding:5px 8px;display:inline-block;}
+.ce-log-status.sent{background:rgba(16,185,129,.12);color:#10b981;}
+.ce-log-status.failed{background:rgba(239,68,68,.12);color:#ef4444;}
+.ce-log-status.queued,.ce-log-status.sending{background:rgba(245,158,11,.12);color:#f59e0b;}
+
+@media(max-width:768px){
+    .uc-avatar{width:52px !important;height:52px !important;min-width:52px !important;max-width:52px !important;}
+    .uc-avatar img{max-width:52px !important;max-height:52px !important;}
+    .cadcolab-enterprise-panel{padding:16px;}
+    .cadcolab-enterprise-panel .ce-header{flex-direction:column;}
+}
