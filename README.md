@@ -1,58 +1,115 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# CADCOLAB ENFAS
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Plataforma corporativa de identidade, acessos, colaboradores e integrações da ENFAS.
 
-## About Laravel
+## Arquitetura de branches
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- `main`: linha estável de produção.
+- `develop`: integração das funcionalidades aprovadas.
+- `feature/identity-directory`: desenvolvimento do módulo corporativo de identidade e diretório.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Identity & Directory
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+O módulo `Identity & Directory` transforma LDAP/Active Directory na fonte central de identidade do CADCOLAB.
 
-## Learning Laravel
+Principais recursos desta implementação:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- autenticação de usuários diretamente no LDAP/Active Directory;
+- suporte a LDAP, LDAPS e StartTLS;
+- a senha do diretório nunca é armazenada no banco do CADCOLAB;
+- sincronização de usuários e grupos;
+- identificação de contas habilitadas e bloqueadas pelo `userAccountControl`;
+- leitura de nome, login, UPN, e-mail, matrícula, departamento, cargo, telefones, gestor e grupos;
+- mapeamento de grupos do AD para perfis `Admin`, `TI`, `RH` e `Operador`;
+- trilha de auditoria de autenticação, teste de conexão e sincronização;
+- painel administrativo em `/identity-directory`;
+- comandos CLI para teste e sincronização.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+### Requisitos do servidor
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
-
-## Agentic Development
-
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+PHP 8.3+ com a extensão LDAP instalada. Em Ubuntu/Debian, instale o pacote correspondente à versão do PHP em uso, por exemplo:
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+sudo apt update
+sudo apt install php8.3-ldap
+sudo systemctl restart php8.3-fpm
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Se o servidor utilizar outra versão do PHP, ajuste o nome do pacote e do serviço.
 
-## Contributing
+Para LDAPS em produção, o servidor PHP deve confiar na cadeia de certificados da autoridade certificadora que emitiu o certificado do controlador de domínio. Não desabilite validação TLS em produção.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### Configuração
 
-## Code of Conduct
+Copie as variáveis de `Identity & Directory` presentes em `.env.example` para o `.env` real e configure:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```dotenv
+IDENTITY_DIRECTORY_ENABLED=true
+IDENTITY_LOCAL_FALLBACK=true
+IDENTITY_SYNC_ON_LOGIN=true
 
-## Security Vulnerabilities
+LDAP_HOST=ad.enfas.local
+LDAP_PORT=636
+LDAP_SSL=true
+LDAP_START_TLS=false
+LDAP_BASE_DN="DC=enfas,DC=local"
+LDAP_USERS_DN="OU=Usuarios,DC=enfas,DC=local"
+LDAP_GROUPS_DN="OU=Grupos,DC=enfas,DC=local"
+LDAP_BIND_DN="CN=svc-cadcolab,OU=Servicos,DC=enfas,DC=local"
+LDAP_BIND_PASSWORD="trocar-no-servidor"
+LDAP_ACCOUNT_SUFFIX="@enfas.local"
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+A conta `LDAP_BIND_DN` deve ser uma conta técnica dedicada e de menor privilégio, com permissão apenas para leitura dos objetos necessários.
 
-## License
+### Perfis por grupos
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```dotenv
+LDAP_ADMIN_GROUPS="CADCOLAB-ADMIN"
+LDAP_TI_GROUPS="CADCOLAB-TI"
+LDAP_RH_GROUPS="CADCOLAB-RH"
+LDAP_DEFAULT_PROFILE=Operador
+```
+
+O CADCOLAB lê `memberOf` do usuário e atribui o perfil correspondente ao CN do grupo.
+
+### Implantação da migration
+
+```bash
+php artisan migrate --force
+php artisan optimize:clear
+```
+
+### Teste do diretório
+
+```bash
+php artisan identity:ldap-test
+```
+
+### Sincronização manual
+
+```bash
+php artisan identity:sync
+```
+
+Também é possível usar o painel `Identity & Directory` para testar a conexão e iniciar uma sincronização.
+
+## Segurança
+
+Não coloque senhas, tokens, chaves privadas ou credenciais LDAP no Git. O `.env.example` contém somente nomes e exemplos de configuração.
+
+O projeto não deve possuir senha administrativa padrão. Para instalação inicial sem LDAP, uma conta de bootstrap pode ser criada exclusivamente por variável de ambiente durante a primeira migration; remova a variável assim que o acesso inicial estiver configurado.
+
+## Stack
+
+- Laravel 13
+- PHP 8.3+
+- MySQL
+- LDAP / Active Directory
+- Microsoft Graph / Microsoft 365
+- Google Workspace Admin APIs
+- Meta WhatsApp Cloud API
+
+## Próximos módulos da suíte
+
+A camada de identidade será a base para provisionamento e desprovisionamento, onboarding/offboarding, políticas de acesso, inventário de contas/licenças, Google Workspace, Microsoft 365 e automações de WhatsApp.
