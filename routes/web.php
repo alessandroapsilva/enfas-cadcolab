@@ -10,6 +10,7 @@ use App\Http\Controllers\DashboardRouterController;
 use App\Http\Controllers\EnterpriseSettingsController;
 use App\Http\Controllers\EnterpriseIntelligenceController;
 use App\Http\Controllers\IdentityDirectoryController;
+use App\Http\Controllers\ReleaseNotesController;
 
 Route::get('/', fn () => redirect('/login'));
 
@@ -30,6 +31,7 @@ Route::prefix('enterprise')->group(function () {
     Route::get('/insights', [EnterpriseIntelligenceController::class, 'insights']);
     Route::get('/reports/summary', [EnterpriseIntelligenceController::class, 'reportSummary']);
     Route::get('/reports/operational', [EnterpriseIntelligenceController::class, 'operationalReport']);
+    Route::get('/changelog', [ReleaseNotesController::class, 'index']);
 });
 
 Route::get('/communication-logs/emails', [CommunicationLogController::class, 'emails']);
