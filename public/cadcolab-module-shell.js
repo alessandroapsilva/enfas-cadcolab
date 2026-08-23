@@ -9,17 +9,20 @@
     const app=qs('.app'), sidebar=qs('.sidebar'), backdrop=qs('.cms-backdrop');
     if(!app||!sidebar)return;
 
-    qsa('.cms-nav-group').forEach((group,index)=>{
+    const groups=qsa('.cms-nav-group');
+    const activeGroup=groups.find(g=>qs('.nav-link.active',g));
+    if(activeGroup) state.open=activeGroup.dataset.group||state.open;
+
+    groups.forEach((group,index)=>{
       const trigger=qs('.cms-nav-trigger',group), body=qs('.cms-nav-body',group);
       if(!trigger||!body)return;
       const key=group.dataset.group||String(index);
-      const hasActive=!!qs('.nav-link.active',group);
-      const shouldOpen=hasActive || (!state.open && index===0) || state.open===key;
+      const shouldOpen=state.open===key || (!state.open&&index===0);
       group.classList.toggle('open',shouldOpen);
       trigger.setAttribute('aria-expanded',shouldOpen?'true':'false');
       trigger.addEventListener('click',()=>{
         const opening=!group.classList.contains('open');
-        qsa('.cms-nav-group.open').forEach(other=>{
+        groups.forEach(other=>{
           if(other===group)return;
           other.classList.remove('open');
           qs('.cms-nav-trigger',other)?.setAttribute('aria-expanded','false');
@@ -32,11 +35,14 @@
 
     const applyCollapsed=()=>{
       app.classList.toggle('cms-collapsed',!!state.collapsed);
-      qs('#cmsCollapse')?.setAttribute('aria-pressed',state.collapsed?'true':'false');
+      const btn=qs('#cmsCollapse');
+      btn?.setAttribute('aria-pressed',state.collapsed?'true':'false');
+      btn?.setAttribute('title',state.collapsed?'Expandir menu':'Recolher menu');
+      const icon=qs('i',btn); if(icon) icon.className=state.collapsed?'fa-solid fa-angles-right':'fa-solid fa-angles-left';
     };
     applyCollapsed();
-
     qs('#cmsCollapse')?.addEventListener('click',()=>{state.collapsed=!state.collapsed;save();applyCollapsed();});
+
     const openMobile=()=>{app.classList.add('cms-mobile-open');document.body.classList.add('cms-no-scroll');};
     const closeMobile=()=>{app.classList.remove('cms-mobile-open');document.body.classList.remove('cms-no-scroll');};
     qs('#cmsMobileMenu')?.addEventListener('click',openMobile);
@@ -49,7 +55,7 @@
     if(search){
       search.addEventListener('input',()=>{
         const term=search.value.trim().toLocaleLowerCase('pt-BR');
-        qsa('.cms-nav-group').forEach(group=>{
+        groups.forEach(group=>{
           let visible=0;
           qsa('.nav-link',group).forEach(link=>{
             const show=!term||link.textContent.toLocaleLowerCase('pt-BR').includes(term);
@@ -63,7 +69,6 @@
         if(e.key==='/'&&!/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName||'')){e.preventDefault();search.focus();}
       });
     }
-
     document.documentElement.dataset.moduleShell='ready';
   }
   document.readyState==='loading'?document.addEventListener('DOMContentLoaded',init):init();
