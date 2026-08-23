@@ -8,11 +8,10 @@ use App\Http\Controllers\CommunicationLogController;
 use App\Http\Controllers\CorporateAuthController;
 use App\Http\Controllers\DashboardRouterController;
 use App\Http\Controllers\EnterpriseSettingsController;
+use App\Http\Controllers\EnterpriseIntelligenceController;
 use App\Http\Controllers\IdentityDirectoryController;
 
-Route::get('/', function () {
-    return redirect('/login');
-});
+Route::get('/', fn () => redirect('/login'));
 
 Route::get('/dashboard', [DashboardRouterController::class, 'index']);
 Route::post('/acao', [ActionRouterController::class, 'handle']);
@@ -25,6 +24,12 @@ Route::prefix('enterprise-settings')->group(function () {
     Route::post('/identity', [EnterpriseSettingsController::class, 'saveIdentity']);
     Route::post('/identity/test', [EnterpriseSettingsController::class, 'testIdentity']);
     Route::post('/identity/sync', [EnterpriseSettingsController::class, 'syncIdentity']);
+});
+
+Route::prefix('enterprise')->group(function () {
+    Route::get('/insights', [EnterpriseIntelligenceController::class, 'insights']);
+    Route::get('/reports/summary', [EnterpriseIntelligenceController::class, 'reportSummary']);
+    Route::get('/reports/operational', [EnterpriseIntelligenceController::class, 'operationalReport']);
 });
 
 Route::get('/communication-logs/emails', [CommunicationLogController::class, 'emails']);
@@ -45,6 +50,4 @@ Route::any('/User/Validate', [AutoatendimentoController::class, 'index']);
 Route::any('/User/NewPassword', [AutoatendimentoController::class, 'index']);
 Route::any('/User/NewUser', [AutoatendimentoController::class, 'index']);
 Route::post('/sync-assinatura', [AdminController::class, 'syncAssinatura']);
-Route::post('/acao/sync-assinatura', function() {
-    return response()->json(['success'=>false,'message'=>'⚠️ Microsoft descontinuou a API de assinatura. Configure manualmente no Outlook Web.']);
-});
+Route::post('/acao/sync-assinatura', fn () => response()->json(['success'=>false,'message'=>'⚠️ Microsoft descontinuou a API de assinatura. Configure manualmente no Outlook Web.']));
