@@ -5,6 +5,7 @@ namespace App\Services;
 use DOMDocument;
 use DOMElement;
 use DOMXPath;
+use Throwable;
 
 class EnterpriseShellService
 {
@@ -12,46 +13,60 @@ class EnterpriseShellService
     {
         if ($html === '' || !str_contains($html, '<body')) return $html;
 
-        $previous = libxml_use_internal_errors(true);
-        $dom = new DOMDocument('1.0', 'UTF-8');
-        $dom->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        libxml_clear_errors();
-        libxml_use_internal_errors($previous);
+        try {
+            $previous = libxml_use_internal_errors(true);
+            $dom = new DOMDocument('1.0', 'UTF-8');
+            $loaded = @$dom->loadHTML('<?xml encoding="UTF-8">' . $html, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+            if (!$loaded) return $html;
 
-        $xpath = new DOMXPath($dom);
-        $sidebar = $xpath->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' sidebar ')]")->item(0);
-        if ($sidebar instanceof DOMElement) {
-            $this->replaceChildren($dom, $sidebar, $this->sidebarHtml($page));
-            $sidebar->setAttribute('class', trim($sidebar->getAttribute('class') . ' cadcolab-v4-sidebar'));
+            $xpath = new DOMXPath($dom);
+            $sidebar = $xpath->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' sidebar ')]")->item(0);
+            if ($sidebar instanceof DOMElement) {
+                $this->replaceChildren($dom, $sidebar, $this->sidebarHtml($page));
+                $sidebar->setAttribute('class', trim($sidebar->getAttribute('class') . ' cadcolab-v4-sidebar'));
+            }
+
+            $topbar = $xpath->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' topbar ')]")->item(0);
+            if ($topbar instanceof DOMElement) {
+                $this->replaceChildren($dom, $topbar, $this->topbarHtml($page));
+                $topbar->setAttribute('class', trim($topbar->getAttribute('class') . ' cadcolab-v4-topbar'));
+            }
+
+            foreach ($xpath->query("//*[contains(normalize-space(string(.)), 'v3.0 Enterprise')]") as $node) {
+                if ($node instanceof DOMElement && in_array(strtolower($node->tagName), ['small','span','div','footer'], true)) $node->nodeValue = '';
+            }
+
+            $body = $xpath->query('//body')->item(0);
+            if ($body instanceof DOMElement) $body->setAttribute('data-cadcolab-shell', 'v4.4.1');
+
+            $result = $dom->saveHTML();
+            return preg_replace('/^<\?xml[^>]+>\s*/', '', $result) ?: $result;
+        } catch (Throwable $e) {
+            report($e);
+            return $html;
         }
-
-        $topbar = $xpath->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' topbar ')]")->item(0);
-        if ($topbar instanceof DOMElement) {
-            $this->replaceChildren($dom, $topbar, $this->topbarHtml($page));
-            $topbar->setAttribute('class', trim($topbar->getAttribute('class') . ' cadcolab-v4-topbar'));
-        }
-
-        foreach ($xpath->query("//*[contains(normalize-space(string(.)), 'v3.0 Enterprise')]") as $node) {
-            if ($node instanceof DOMElement && in_array(strtolower($node->tagName), ['small','span','div','footer'], true)) $node->nodeValue = '';
-        }
-
-        $body = $xpath->query('//body')->item(0);
-        if ($body instanceof DOMElement) $body->setAttribute('data-cadcolab-shell', 'v4.4.0');
-
-        $result = $dom->saveHTML();
-        return preg_replace('/^<\?xml[^>]+>\s*/', '', $result) ?: $result;
     }
 
     private function replaceChildren(DOMDocument $dom, DOMElement $target, string $html): void
     {
         while ($target->firstChild) $target->removeChild($target->firstChild);
-        $tmp = new DOMDocument('1.0', 'UTF-8');
-        $tmp->loadHTML('<?xml encoding="UTF-8"><div id="cadcolab-fragment">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
-        $wrapper = (new DOMXPath($tmp))->query('//*[@id="cadcolab-fragment"]')->item(0);
-        if (!$wrapper) return;
-        $children = [];
-        foreach ($wrapper->childNodes as $child) $children[] = $child;
-        foreach ($children as $child) $target->appendChild($dom->importNode($child, true));
+
+        $previous = libxml_use_internal_errors(true);
+        try {
+            $tmp = new DOMDocument('1.0', 'UTF-8');
+            $loaded = @$tmp->loadHTML('<?xml encoding="UTF-8"><div id="cadcolab-fragment">' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+            if (!$loaded) return;
+            $wrapper = (new DOMXPath($tmp))->query('//*[@id="cadcolab-fragment"]')->item(0);
+            if (!$wrapper) return;
+            $children = [];
+            foreach ($wrapper->childNodes as $child) $children[] = $child;
+            foreach ($children as $child) $target->appendChild($dom->importNode($child, true));
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+        }
     }
 
     private function sidebarHtml(string $page): string
@@ -87,7 +102,7 @@ class EnterpriseShellService
             }
             $out .= '</div></details>';
         }
-        return $out . '</nav><div class="v4-sidebar-foot"><strong>CADCOLAB v4.4.0</strong><span>Stable Enterprise Shell</span><small>ENFAS • 2026</small></div>';
+        return $out . '</nav><div class="v4-sidebar-foot"><strong>CADCOLAB v4.4.1</strong><span>Stable Enterprise Shell</span><small>ENFAS • 2026</small></div>';
     }
 
     private function topbarHtml(string $page): string
