@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ActionRouterController;
 use App\Http\Controllers\AutoatendimentoController;
+use App\Http\Controllers\BadgeStudioController;
 use App\Http\Controllers\CommunicationLogController;
 use App\Http\Controllers\CorporateAuthController;
 use App\Http\Controllers\DashboardRouterController;
@@ -13,7 +14,6 @@ use App\Http\Controllers\IdentityDirectoryController;
 use App\Http\Controllers\ReleaseNotesController;
 
 Route::get('/', fn () => redirect('/login'));
-
 Route::get('/dashboard', [DashboardRouterController::class, 'index']);
 Route::post('/acao', [ActionRouterController::class, 'handle']);
 Route::get('/login', [CorporateAuthController::class, 'login']);
@@ -32,10 +32,13 @@ Route::prefix('enterprise')->group(function () {
     Route::get('/reports/summary', [EnterpriseIntelligenceController::class, 'reportSummary']);
     Route::get('/reports/operational', [EnterpriseIntelligenceController::class, 'operationalReport']);
     Route::get('/changelog', [ReleaseNotesController::class, 'index']);
+    Route::get('/badges', [BadgeStudioController::class, 'index']);
+    Route::post('/badges', [BadgeStudioController::class, 'save']);
+    Route::delete('/badges/{id}', [BadgeStudioController::class, 'delete']);
+    Route::get('/badges/sample', [BadgeStudioController::class, 'sample']);
 });
 
 Route::get('/communication-logs/emails', [CommunicationLogController::class, 'emails']);
-
 Route::prefix('identity-directory')->group(function () {
     Route::get('/', [IdentityDirectoryController::class, 'index']);
     Route::post('/settings', [IdentityDirectoryController::class, 'saveSettings']);
