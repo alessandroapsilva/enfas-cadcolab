@@ -18,6 +18,7 @@ Route::get('/logout', [CorporateAuthController::class, 'logout']);
 
 Route::prefix('identity-directory')->group(function () {
     Route::get('/', [IdentityDirectoryController::class, 'index']);
+    Route::post('/settings', [IdentityDirectoryController::class, 'saveSettings']);
     Route::post('/test', [IdentityDirectoryController::class, 'test']);
     Route::post('/sync', [IdentityDirectoryController::class, 'sync']);
 });
