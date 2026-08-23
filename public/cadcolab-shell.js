@@ -4,12 +4,9 @@
     const qsa = (s, r = document) => [...r.querySelectorAll(s)];
     const page = () => new URLSearchParams(location.search).get('p') || 'dashboard';
     const esc = (v = '') => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-
     let navigating = false;
 
-    function sameDashboard(url) {
-        return url.origin === location.origin && url.pathname === '/dashboard' && url.searchParams.has('p');
-    }
+    function sameDashboard(url) { return url.origin === location.origin && url.pathname === '/dashboard' && url.searchParams.has('p'); }
 
     function loading(on, label = 'Abrindo módulo…') {
         let el = qs('#cadcolabSoftLoader');
@@ -27,27 +24,18 @@
     async function softNavigate(href, push = true) {
         const target = new URL(href, location.href);
         if (!sameDashboard(target) || navigating) return false;
-
         if (target.pathname === location.pathname && target.search === location.search && target.hash) {
             if (push) history.pushState({cadcolab:true}, '', target.href);
             requestAnimationFrame(() => qs(target.hash)?.scrollIntoView({behavior:'smooth', block:'start'}));
             return true;
         }
-
         navigating = true;
         loading(true, `Abrindo ${target.searchParams.get('p') || 'módulo'}…`);
         try {
-            const response = await fetch(target.href, {
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'text/html',
-                    'X-Cadcolab-Navigation': 'soft'
-                }
-            });
+            const response = await fetch(target.href, {credentials:'same-origin',headers:{Accept:'text/html','X-Cadcolab-Navigation':'soft'}});
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const html = await response.text();
             if (!html.includes('class="sidebar"') || !html.includes('class="content-area"')) throw new Error('Resposta incompleta');
-
             if (push) history.pushState({cadcolab:true}, '', target.href);
             document.open('text/html', 'replace');
             document.write(html);
@@ -71,7 +59,6 @@
             event.preventDefault();
             softNavigate(url.href, true);
         }, true);
-
         window.addEventListener('popstate', () => {
             if (location.pathname === '/dashboard') softNavigate(location.href, false);
         });
@@ -81,17 +68,10 @@
         const sidebar = qs('.sidebar');
         const nav = qs('.sidebar nav');
         if (!sidebar || !nav) return;
-
         sidebar.classList.add('ce-shell-sidebar');
-
         const footer = qsa('.sidebar .mt-auto').at(-1);
         if (footer) footer.innerHTML = `<div class="ce-shell-version"><strong>CADCOLAB v${VERSION}</strong><span>Enterprise Identity Suite</span><small>ENFAS • 2026</small></div>`;
-
-        qsa('.ce-nav-group').forEach(group => {
-            const active = !!group.querySelector('.ce-nav-link.active');
-            group.open = active;
-        });
-
+        qsa('.ce-nav-group').forEach(group => { group.open = !!group.querySelector('.ce-nav-link.active'); });
         const root = qs('.ce-nav-root');
         if (root && !qs('.ce-module-search')) {
             const search = document.createElement('div');
@@ -101,12 +81,9 @@
             const input = qs('input', search);
             input.addEventListener('input', () => filterModules(input.value));
             document.addEventListener('keydown', e => {
-                if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) {
-                    e.preventDefault(); input.focus();
-                }
+                if (e.key === '/' && !/INPUT|TEXTAREA|SELECT/.test(document.activeElement?.tagName || '')) { e.preventDefault(); input.focus(); }
             });
         }
-
         const logoMini = qs('.sidebar-logo .lg-mini');
         if (logoMini) logoMini.textContent = 'ENTERPRISE IDENTITY SUITE';
     }
@@ -136,30 +113,20 @@
             } catch (_) {}
             link.classList.toggle('active', active);
         });
-        qsa('.ce-nav-group').forEach(group => {
-            if (group.querySelector('.ce-nav-link.active')) group.open = true;
-        });
+        qsa('.ce-nav-group').forEach(group => { if (group.querySelector('.ce-nav-link.active')) group.open = true; });
     }
 
     async function renderChangelog() {
         if (page() !== 'changelog') return;
         const area = qs('.content-area');
         if (!area) return;
-
         area.innerHTML = '<div class="ce-release-loading"><span class="ce-shell-spinner"></span> Carregando histórico de versões…</div>';
         try {
-            const response = await fetch('/enterprise/changelog', {headers:{Accept:'application/json'}, credentials:'same-origin'});
+            const response = await fetch('/enterprise/changelog', {headers:{Accept:'application/json'},credentials:'same-origin'});
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const data = await response.json();
             const versions = data.versions || [];
-            area.innerHTML = `
-                <section class="ce-release-hero">
-                    <div><span class="ce-release-kicker">RELEASE CENTER</span><h2>Histórico de evolução do CADCOLAB</h2><p>Todas as versões relevantes da plataforma, organizadas por entrega e impacto.</p></div>
-                    <div class="ce-release-current"><small>VERSÃO ATUAL</small><strong>v${esc(data.current?.version || VERSION)}</strong><span>${esc(data.current?.date || '')}</span></div>
-                </section>
-                <div class="ce-release-toolbar"><div><strong>${versions.length}</strong><span> versões documentadas</span></div><input id="ceReleaseFilter" class="form-control" type="search" placeholder="Filtrar versões ou recursos…"></div>
-                <div class="ce-release-timeline">${versions.map(renderVersion).join('')}</div>`;
-
+            area.innerHTML = `<section class="ce-release-hero"><div><span class="ce-release-kicker">RELEASE CENTER</span><h2>Histórico de evolução do CADCOLAB</h2><p>Todas as versões relevantes da plataforma, organizadas por entrega e impacto.</p></div><div class="ce-release-current"><small>VERSÃO ATUAL</small><strong>v${esc(data.current?.version || VERSION)}</strong><span>${esc(data.current?.date || '')}</span></div></section><div class="ce-release-toolbar"><div><strong>${versions.length}</strong><span> versões documentadas</span></div><input id="ceReleaseFilter" class="form-control" type="search" placeholder="Filtrar versões ou recursos…"></div><div class="ce-release-timeline">${versions.map(renderVersion).join('')}</div>`;
             qs('#ceReleaseFilter')?.addEventListener('input', e => {
                 const term = e.target.value.toLocaleLowerCase('pt-BR');
                 qsa('.ce-release-item').forEach(item => item.style.display = !term || item.textContent.toLocaleLowerCase('pt-BR').includes(term) ? '' : 'none');
@@ -171,18 +138,13 @@
 
     function renderVersion(v) {
         const items = (v.items || []).map(item => `<li><i class="fa-solid fa-check"></i><span>${esc(item)}</span></li>`).join('');
-        return `<article class="ce-release-item ${esc(v.type || 'feature')}">
-            <div class="ce-release-rail"><span></span></div>
-            <div class="ce-release-card">
-                <div class="ce-release-head"><div><span class="ce-release-version">v${esc(v.version)}</span><span class="ce-release-date">${esc(v.date)}</span></div>${v.type === 'current' ? '<span class="ce-release-badge">ATUAL</span>' : ''}</div>
-                <h3>${esc(v.title)}</h3><p>${esc(v.summary)}</p><ul>${items}</ul>
-            </div>
-        </article>`;
+        return `<article class="ce-release-item ${esc(v.type || 'feature')}"><div class="ce-release-rail"><span></span></div><div class="ce-release-card"><div class="ce-release-head"><div><span class="ce-release-version">v${esc(v.version)}</span><span class="ce-release-date">${esc(v.date)}</span></div>${v.type === 'current' ? '<span class="ce-release-badge">ATUAL</span>' : ''}</div><h3>${esc(v.title)}</h3><p>${esc(v.summary)}</p><ul>${items}</ul></div></article>`;
     }
 
     function markShellReady() {
         document.documentElement.dataset.cadcolabVersion = VERSION;
-        document.title = `${document.title.replace(/\s*[•|-]\s*v?\d+(\.\d+)*/i, '')} • v${VERSION}`;
+        const title = (document.title || 'CADCOLAB').replace(/\s*•\s*v?\d+(\.\d+)*/i, '');
+        document.title = `${title} • v${VERSION}`;
     }
 
     document.addEventListener('DOMContentLoaded', () => {
