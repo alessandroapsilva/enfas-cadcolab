@@ -8,10 +8,27 @@ class ReleaseNotesService
     {
         return [
             [
+                'version' => '4.3.0',
+                'date' => '23/08/2026',
+                'title' => 'Badge Studio & People Experience',
+                'type' => 'current',
+                'summary' => 'Novo módulo visual para criação, edição e pré-visualização de crachás e modelos de identificação.',
+                'items' => [
+                    'Designer de Crachás & Modelos como módulo independente em Pessoas & Estrutura.',
+                    'Editor visual com frente e verso, elementos arrastáveis e propriedades por elemento.',
+                    'Campos dinâmicos de colaborador: nome, matrícula, cargo, unidade, e-mail, CPF, nascimento e foto.',
+                    'Pré-visualização com dados reais quando disponíveis e dados seguros de demonstração como fallback.',
+                    'Modelos por unidade, orientação vertical/horizontal, dimensões em milímetros e modelo padrão.',
+                    'Modo de visualização para impressão e armazenamento do layout em JSON versionável.',
+                    'Sidebar atualizado para CADCOLAB v4.3.0 e separação mais clara de módulos.',
+                    'Base preparada para expansão futura de modelos de documentos, assinaturas e credenciais visuais.'
+                ],
+            ],
+            [
                 'version' => '4.2.0',
                 'date' => '23/08/2026',
                 'title' => 'Navigation Shell & Product Experience',
-                'type' => 'current',
+                'type' => 'feature',
                 'summary' => 'Nova navegação modular sem recarregamento completo, sidebar reorganizado e changelog centralizado.',
                 'items' => [
                     'Navegação assíncrona entre módulos usando fetch e History API.',
