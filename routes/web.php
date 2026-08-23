@@ -4,13 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AutoatendimentoController;
 use App\Http\Controllers\CorporateAuthController;
+use App\Http\Controllers\DashboardRouterController;
 use App\Http\Controllers\IdentityDirectoryController;
 
 Route::get('/', function () {
     return redirect('/login');
 });
 
-Route::get('/dashboard', [AdminController::class, 'index']);
+Route::get('/dashboard', [DashboardRouterController::class, 'index']);
 Route::post('/acao', [AdminController::class, 'acaoRapida']);
 Route::get('/login', [CorporateAuthController::class, 'login']);
 Route::post('/login', [CorporateAuthController::class, 'login']);
