@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class DashboardRouterController extends Controller
 {
@@ -17,16 +19,35 @@ class DashboardRouterController extends Controller
             if ($page === 'badge-studio') {
                 $request->query->set('p', 'dashboard');
             }
+
             $response = app(AdminController::class)->index($request);
+
             if ($page === 'badge-studio') {
                 $request->query->set('p', 'badge-studio');
             }
         }
 
-        if (!$response instanceof View) return $response;
+        $html = null;
+        $status = 200;
+        $headers = [];
 
-        $html = $response->render();
-        $version = '20260823-v430';
+        if ($response instanceof View) {
+            $html = $response->render();
+        } elseif ($response instanceof SymfonyResponse) {
+            $contentType = (string) $response->headers->get('Content-Type', '');
+            if ($response->isRedirection() || ($contentType !== '' && !str_contains(strtolower($contentType), 'text/html'))) {
+                return $response;
+            }
+            $html = $response->getContent();
+            $status = $response->getStatusCode();
+            $headers = $response->headers->all();
+        }
+
+        if (!is_string($html) || $html === '' || !str_contains($html, '</body>')) {
+            return $response;
+        }
+
+        $version = '20260823-v4311';
         $head = '<link rel="stylesheet" href="/cadcolab-enterprise.css?v='.$version.'">'
               . '<link rel="stylesheet" href="/cadcolab-intelligence.css?v='.$version.'">'
               . '<link rel="stylesheet" href="/cadcolab-shell.css?v='.$version.'">'
@@ -36,9 +57,22 @@ class DashboardRouterController extends Controller
               . '<script src="/cadcolab-shell.js?v='.$version.'"></script>'
               . '<script src="/cadcolab-modules.js?v='.$version.'"></script>'
               . '<script src="/cadcolab-badge-studio.js?v='.$version.'"></script>';
-        $html = str_replace('</head>', $head.'</head>', $html);
-        $html = str_replace('</body>', $body.'</body>', $html);
 
-        return response($html);
+        if (!str_contains($html, '/cadcolab-shell.css')) {
+            $html = str_replace('</head>', $head.'</head>', $html);
+        }
+        if (!str_contains($html, '/cadcolab-shell.js')) {
+            $html = str_replace('</body>', $body.'</body>', $html);
+        }
+
+        $final = response($html, $status);
+        foreach ($headers as $name => $values) {
+            if (in_array(strtolower($name), ['content-length', 'transfer-encoding'], true)) continue;
+            foreach ((array) $values as $value) $final->headers->set($name, $value, false);
+        }
+        $final->headers->set('Content-Type', 'text/html; charset=UTF-8');
+        $final->headers->set('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+
+        return $final;
     }
 }
