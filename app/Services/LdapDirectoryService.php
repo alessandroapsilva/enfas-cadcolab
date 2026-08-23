@@ -7,7 +7,10 @@ use RuntimeException;
 
 class LdapDirectoryService
 {
-    public function __construct(private readonly IdentitySettingsService $settings) {}
+    public function __construct(
+        private readonly IdentitySettingsService $settings,
+        private readonly IdentityPolicyService $policies,
+    ) {}
 
     public function isEnabled(): bool
     {
@@ -46,14 +49,19 @@ class LdapDirectoryService
             foreach ($groups as $g) DB::table('identity_directory_groups')->updateOrInsert(['directory_key'=>$g['directory_key']], $g + ['synced_at'=>now(),'updated_at'=>now(),'created_at'=>now()]);
             foreach ($users as $u) $this->persistUser($u);
         });
+        @ldap_unbind($ldap);
         return ['users'=>count($users),'groups'=>count($groups)];
     }
 
     public function persistUser(array $u): void
     {
+        $policy = $this->policies->resolve($u);
+        $u['profile'] = $policy['profile'] ?: ($u['profile'] ?? 'Operador');
+
         DB::table('identity_directory_users')->updateOrInsert(['directory_key'=>$u['directory_key']], [
             'username'=>$u['username'],'user_principal_name'=>$u['user_principal_name'],'display_name'=>$u['display_name'],'email'=>$u['email'],'employee_id'=>$u['employee_id'],'department'=>$u['department'],'title'=>$u['title'],'phone'=>$u['phone'],'mobile'=>$u['mobile'],'manager_dn'=>$u['manager_dn'],'distinguished_name'=>$u['distinguished_name'],'groups_json'=>json_encode($u['groups'],JSON_UNESCAPED_UNICODE),'profile'=>$u['profile'],'is_active'=>$u['is_active'],'synced_at'=>now(),'updated_at'=>now(),'created_at'=>now(),
         ]);
+
         if (in_array($u['profile'],['Admin','TI','RH'],true)) {
             DB::table('usuarios_admin')->updateOrInsert(['usuario'=>$u['username']], [
                 'nome'=>$u['display_name'] ?: $u['username'],'email'=>$u['email'],'senha'=>password_hash(bin2hex(random_bytes(32)),PASSWORD_BCRYPT),'perfil'=>$u['profile'],'identity_source'=>'ldap','ldap_directory_key'=>$u['directory_key'],'ldap_dn'=>$u['distinguished_name'],'ativo'=>$u['is_active'],'ldap_synced_at'=>now(),'updated_at'=>now(),'created_at'=>now(),
