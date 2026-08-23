@@ -10,13 +10,17 @@ class LdapDirectoryService
 {
     private $connection = null;
 
+    public function __construct(private readonly IdentitySettingsService $settings) {}
+
     public function isEnabled(): bool
     {
+        $this->settings->apply();
         return (bool) config('identity.enabled');
     }
 
     public function testConnection(): array
     {
+        $this->settings->apply();
         try {
             $ldap = $this->connect();
             $this->bindServiceAccount($ldap);
@@ -28,6 +32,7 @@ class LdapDirectoryService
 
     public function authenticate(string $username, string $password): ?array
     {
+        $this->settings->apply();
         if (!$this->isEnabled() || trim($username) === '' || $password === '') {
             return null;
         }
@@ -48,13 +53,13 @@ class LdapDirectoryService
             return null;
         }
 
-        // Rebind com a conta de serviço para manter a conexão utilizável no restante do fluxo.
         $this->bindServiceAccount($ldap);
         return $this->normalizeUser($entry);
     }
 
     public function findUser(string $username, $ldap = null): ?array
     {
+        $this->settings->apply();
         $ldap = $ldap ?: $this->connectAndBind();
         $cfg = config('identity.ldap');
         $attr = $cfg['username_attribute'];
@@ -71,6 +76,7 @@ class LdapDirectoryService
 
     public function syncAll(): array
     {
+        $this->settings->apply();
         $ldap = $this->connectAndBind();
         $users = $this->fetchUsers($ldap);
         $groups = $this->fetchGroups($ldap);
@@ -243,6 +249,7 @@ class LdapDirectoryService
     {
         if (!extension_loaded('ldap')) throw new RuntimeException('Extensão PHP LDAP não instalada. Instale php-ldap no servidor.');
         $cfg = config('identity.ldap');
+        if (empty($cfg['host'])) throw new RuntimeException('Servidor LDAP não configurado.');
         $scheme = $cfg['ssl'] ? 'ldaps://' : 'ldap://';
         $ldap = @ldap_connect($scheme.$cfg['host'], $cfg['port']);
         if (!$ldap) throw new RuntimeException('Não foi possível abrir conexão com o servidor LDAP.');
@@ -259,7 +266,7 @@ class LdapDirectoryService
     private function bindServiceAccount($ldap): void
     {
         $cfg = config('identity.ldap');
-        if (!$cfg['bind_dn']) throw new RuntimeException('LDAP_BIND_DN não configurado.');
+        if (!$cfg['bind_dn']) throw new RuntimeException('Usuário de bind LDAP não configurado.');
         if (!@ldap_bind($ldap, $cfg['bind_dn'], $cfg['bind_password'])) {
             throw new RuntimeException('Falha no bind LDAP da conta de serviço.');
         }
