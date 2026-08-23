@@ -18,9 +18,7 @@ class DashboardRouterController extends Controller
         $module = $registry->module($page, $role);
 
         if ($page === 'cracha' || $page === 'ficha') return app(AdminController::class)->index($request);
-        if ($page === 'badge-studio') return response()->view('modules.badge-studio')->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
         if ($page === 'identity-directory') return app(IdentityDirectoryController::class)->dashboard($request);
-
         if (!$module) return redirect('/dashboard?p=dashboard')->with('swal_error', 'Módulo indisponível para o seu perfil.');
 
         $legacyResponse = app(AdminController::class)->index($request);
@@ -50,6 +48,7 @@ class DashboardRouterController extends Controller
             'insights' => 'v5.insights',
             'email-logs' => 'v5.email-logs',
             'configuracoes' => 'v5.settings',
+            'badge-studio' => 'modules.badge-studio',
             'changelog' => 'v5.changelog',
             default => 'v5.hub',
         };
@@ -75,6 +74,7 @@ class DashboardRouterController extends Controller
             'unidades' => 'Estrutura corporativa, parâmetros e modelos por unidade.',
             'setores' => 'Organização dos setores e vínculos funcionais.',
             'cargos' => 'Cargos, funções e políticas relacionadas.',
+            'badge-studio' => 'Designer visual de crachás, credenciais e modelos por unidade.',
             'grupos' => 'Perfis RBAC e políticas de acesso corporativo.',
             'sistemas' => 'Catálogo de aplicações SSO e acessos corporativos.',
             'usuarios' => 'Operadores administrativos e privilégios do CADCOLAB.',
