@@ -17,21 +17,11 @@ class DashboardRouterController extends Controller
         $role = $registry->role();
         $module = $registry->module($page, $role);
 
-        // Rotas especiais existentes fora do shell administrativo.
-        if ($page === 'cracha' || $page === 'ficha') {
-            return app(AdminController::class)->index($request);
-        }
-        if ($page === 'badge-studio') {
-            return response()->view('modules.badge-studio')->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
-        }
-        if ($page === 'identity-directory') {
-            return app(IdentityDirectoryController::class)->dashboard($request);
-        }
+        if ($page === 'cracha' || $page === 'ficha') return app(AdminController::class)->index($request);
+        if ($page === 'badge-studio') return response()->view('modules.badge-studio')->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        if ($page === 'identity-directory') return app(IdentityDirectoryController::class)->dashboard($request);
 
-        // Página desconhecida ou sem permissão: não cai mais silenciosamente no painel legado.
-        if (!$module) {
-            return redirect('/dashboard?p=dashboard')->with('swal_error', 'Módulo indisponível para o seu perfil.');
-        }
+        if (!$module) return redirect('/dashboard?p=dashboard')->with('swal_error', 'Módulo indisponível para o seu perfil.');
 
         $legacyResponse = app(AdminController::class)->index($request);
         $legacyData = $legacyResponse instanceof View ? $legacyResponse->getData() : [];
@@ -56,13 +46,12 @@ class DashboardRouterController extends Controller
             'colaboradores' => 'v5.collaborators',
             'unidades', 'setores', 'cargos', 'grupos', 'sistemas', 'usuarios' => 'v5.collection',
             'auditoria', 'erros' => 'v5.logs',
+            'configuracoes' => 'v5.settings',
             'changelog' => 'v5.changelog',
             default => 'v5.hub',
         };
 
-        if ($page === 'changelog') {
-            $base['versions'] = app(ReleaseNotesService::class)->all();
-        }
+        if ($page === 'changelog') $base['versions'] = app(ReleaseNotesService::class)->all();
         if ($view === 'v5.collection') {
             $base['tableName'] = match ($page) {
                 'sistemas' => 'sistemas_hc',
