@@ -18,13 +18,7 @@ class DashboardRouterController extends Controller
         $module = $registry->module($page, $role);
 
         if ($page === 'cracha' || $page === 'ficha') return app(AdminController::class)->index($request);
-        if ($page === 'identity-directory') return app(IdentityDirectoryController::class)->dashboard($request);
         if (!$module) return redirect('/dashboard?p=dashboard')->with('swal_error', 'Módulo indisponível para o seu perfil.');
-
-        $legacyResponse = app(AdminController::class)->index($request);
-        $legacyData = $legacyResponse instanceof View ? $legacyResponse->getData() : [];
-        $dados = $legacyData['dados'] ?? [];
-        $cfgGlobal = $legacyData['cfg_global'] ?? [];
 
         $module['description'] = $this->description($page);
         $base = [
@@ -32,12 +26,27 @@ class DashboardRouterController extends Controller
             'module' => $module,
             'moduleGroups' => $registry->groups($role),
             'cadcolabVersion' => $registry->version(),
-            'dados' => $dados,
-            'cfg_global' => $cfgGlobal,
-            'isAdmin' => $legacyData['isAdmin'] ?? false,
-            'isTI' => $legacyData['isTI'] ?? false,
-            'isRH' => $legacyData['isRH'] ?? false,
+            'dados' => [],
+            'cfg_global' => [],
+            'isAdmin' => $role === 'admin',
+            'isTI' => $role === 'ti',
+            'isRH' => in_array($role, ['admin','ti','rh'], true),
         ];
+
+        if ($page === 'identity-directory') {
+            $directoryResponse = app(IdentityDirectoryController::class)->dashboard($request);
+            $directoryData = $directoryResponse instanceof View ? $directoryResponse->getData() : [];
+            $base = array_merge($base, $directoryData);
+            return response()->view('v5.identity-directory', $base)->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+        }
+
+        $legacyResponse = app(AdminController::class)->index($request);
+        $legacyData = $legacyResponse instanceof View ? $legacyResponse->getData() : [];
+        $base['dados'] = $legacyData['dados'] ?? [];
+        $base['cfg_global'] = $legacyData['cfg_global'] ?? [];
+        $base['isAdmin'] = $legacyData['isAdmin'] ?? $base['isAdmin'];
+        $base['isTI'] = $legacyData['isTI'] ?? $base['isTI'];
+        $base['isRH'] = $legacyData['isRH'] ?? $base['isRH'];
 
         $view = match ($page) {
             'dashboard' => 'v5.dashboard',
@@ -75,6 +84,7 @@ class DashboardRouterController extends Controller
             'setores' => 'Organização dos setores e vínculos funcionais.',
             'cargos' => 'Cargos, funções e políticas relacionadas.',
             'badge-studio' => 'Designer visual de crachás, credenciais e modelos por unidade.',
+            'identity-directory' => 'LDAP, Active Directory, usuários, grupos e sincronização corporativa.',
             'grupos' => 'Perfis RBAC e políticas de acesso corporativo.',
             'sistemas' => 'Catálogo de aplicações SSO e acessos corporativos.',
             'usuarios' => 'Operadores administrativos e privilégios do CADCOLAB.',
