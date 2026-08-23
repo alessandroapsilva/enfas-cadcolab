@@ -14,20 +14,24 @@ return new class extends Migration {
                 $table->string('email')->nullable();
                 $table->string('usuario')->unique();
                 $table->string('senha');
-                $table->string('perfil')->default('Operador'); // TI, RH, Admin
-                $table->unsignedBigInteger('pre_registro_id')->nullable(); // Vinculo com Colaborador
+                $table->string('perfil')->default('Operador');
+                $table->unsignedBigInteger('pre_registro_id')->nullable();
                 $table->timestamps();
             });
 
-            // Injetar o usuário master automaticamente
-            DB::table('usuarios_admin')->insert([
-                'nome' => 'Alessandro Silva',
-                'email' => 'alessandro@enfas.com.br',
-                'usuario' => 'admin',
-                'senha' => Hash::make('Enfas@2026'),
-                'perfil' => 'TI',
-                'created_at' => now()
-            ]);
+            // Bootstrap local é opcional e nunca possui senha fixa no repositório.
+            $bootstrapPassword = env('CADCOLAB_BOOTSTRAP_ADMIN_PASSWORD');
+            if (!empty($bootstrapPassword)) {
+                DB::table('usuarios_admin')->insert([
+                    'nome' => env('CADCOLAB_BOOTSTRAP_ADMIN_NAME', 'Administrador CADCOLAB'),
+                    'email' => env('CADCOLAB_BOOTSTRAP_ADMIN_EMAIL'),
+                    'usuario' => env('CADCOLAB_BOOTSTRAP_ADMIN_USER', 'admin'),
+                    'senha' => Hash::make($bootstrapPassword),
+                    'perfil' => 'TI',
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+            }
         }
     }
     public function down(): void {}
