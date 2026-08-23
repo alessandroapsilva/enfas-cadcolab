@@ -17,8 +17,9 @@ class DashboardRouterController extends Controller
         if (!$response instanceof View) return $response;
 
         $html = $response->render();
-        $head = '<link rel="stylesheet" href="/cadcolab-enterprise.css?v=20260823">';
-        $body = '<script src="/cadcolab-enterprise.js?v=20260823"></script>';
+        $version = '20260823-premium2';
+        $head = '<link rel="stylesheet" href="/cadcolab-enterprise.css?v='.$version.'">';
+        $body = '<script src="/cadcolab-enterprise.js?v='.$version.'"></script>';
         $html = str_replace('</head>', $head.'</head>', $html);
         $html = str_replace('</body>', $body.'</body>', $html);
 
