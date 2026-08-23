@@ -10,7 +10,9 @@ class DashboardRouterController extends Controller
 {
     public function index(Request $request)
     {
-        abort_unless(session('admin_logado'), 302, '', ['Location' => '/login']);
+        if (!session('admin_logado')) {
+            return redirect('/login');
+        }
 
         $page = $request->query('p', 'dashboard');
 
