@@ -48,7 +48,7 @@ class DashboardRouterController extends Controller
             return $response;
         }
 
-        $version = '20260823-v4320';
+        $version = '20260823-v4340';
         $head = '<link rel="stylesheet" href="/cadcolab-enterprise.css?v='.$version.'">'
               . '<link rel="stylesheet" href="/cadcolab-intelligence.css?v='.$version.'">'
               . '<link rel="stylesheet" href="/cadcolab-shell.css?v='.$version.'">';
