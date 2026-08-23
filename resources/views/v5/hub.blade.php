@@ -1,0 +1,12 @@
+@extends('layouts.cadcolab-v5')
+@section('content')
+<div class="v5-card"><div class="v5-section-head"><div><h2>{{ $module['label'] }}</h2><small style="color:var(--v5-muted)">{{ $module['description'] ?? 'Módulo consolidado na arquitetura CADCOLAB v5.' }}</small></div><span class="v5-badge">v{{ $cadcolabVersion }}</span></div>
+@if($page==='status')
+<div class="v5-grid">@foreach(($dados['api_status'] ?? []) as $k=>$v)@if(!str_ends_with($k,'_msg'))<div class="v5-card v5-kpi"><small>{{ strtoupper($k) }}</small><strong style="font-size:18px;color:{{ $v?'#6ce7b7':'#ff9aa6' }}">{{ $v?'ONLINE':'ATENÇÃO' }}</strong><span>{{ $dados['api_status'][$k.'_msg'] ?? '' }}</span></div>@endif @endforeach</div>
+@elseif($page==='relatorios')
+<div class="v5-grid"><div class="v5-card v5-kpi"><small>Colaboradores</small><strong>{{ $dados['tot']??0 }}</strong><span>Total</span></div><div class="v5-card v5-kpi"><small>Ativos</small><strong>{{ $dados['ati']??0 }}</strong><span>Em operação</span></div><div class="v5-card v5-kpi"><small>Pendentes</small><strong>{{ $dados['pen']??0 }}</strong><span>Aguardando</span></div><div class="v5-card v5-kpi"><small>Outros status</small><strong>{{ $dados['ina']??0 }}</strong><span>Bloqueados/inativos</span></div></div><div class="v5-section v5-card"><div class="v5-section-head"><h2>Relatórios Enterprise</h2></div><p style="color:var(--v5-muted);font-size:12px">A consolidação v5 separa relatórios executivos, identidade, cloud, lifecycle e comunicações. Os dados continuam vindo das tabelas atuais e serão expandidos sem duplicar a lógica do painel legado.</p></div>
+@else
+<div class="v5-grid">@foreach($moduleGroups as $gk=>$group)@if(isset($group['modules'][$page]))<div class="v5-card"><small style="color:var(--v5-primary);font-weight:800">{{ strtoupper($group['label']) }}</small><h3 style="margin:8px 0 6px">{{ $module['label'] }}</h3><p style="margin:0;color:var(--v5-muted);font-size:12px">Este módulo está sendo consolidado no shell v5 sem depender do painel v3. As integrações e ações existentes permanecem preservadas no backend.</p></div>@endif @endforeach<div class="v5-card"><small style="color:var(--v5-muted)">PRÓXIMA ETAPA</small><h3 style="margin:8px 0 6px">Operação dedicada</h3><p style="margin:0;color:var(--v5-muted);font-size:12px">Controller, serviço e visão próprios, com auditoria, saúde e permissões específicas.</p></div></div>
+@endif
+</div>
+@endsection
