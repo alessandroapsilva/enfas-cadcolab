@@ -51,7 +51,8 @@ class CloudIntegrationService
 
     public static function dispararWhatsApp($tel,$tpl,$vars,$cfg)
     {
-        return app(WhatsAppService::class)->sendTemplate($tel,$tpl,$vars,$cfg);
+        try { $result=app(WhatsAppService::class)->sendTemplate((string)$tel,(string)$tpl,(array)$vars); return (bool)($result['success']??false); }
+        catch(\Throwable $e){ self::erro('WhatsApp',$e->getMessage()); return false; }
     }
 
     public static function sincronizarAssinaturaM365($email,$html,$cfg)
