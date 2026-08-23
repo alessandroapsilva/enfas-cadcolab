@@ -16,7 +16,7 @@ class DashboardRouterController extends Controller
         if (!$response instanceof View) return $response;
 
         $html = $response->render();
-        $version = '20260823-shell420';
+        $version = '20260823-shell421';
         $head = '<link rel="stylesheet" href="/cadcolab-enterprise.css?v='.$version.'">'
               . '<link rel="stylesheet" href="/cadcolab-intelligence.css?v='.$version.'">'
               . '<link rel="stylesheet" href="/cadcolab-shell.css?v='.$version.'">';
