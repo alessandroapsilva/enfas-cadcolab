@@ -29,7 +29,7 @@ class BadgeStudioController extends Controller
                 'is_default'=>(bool)$t->is_default,'active'=>(bool)$t->active,'updated_at'=>$t->updated_at,
             ])->values(),
             'fields' => $this->fields(),
-            'sample' => $this->sample(),
+            'sample' => $this->sampleData(),
         ]);
     }
 
@@ -74,7 +74,7 @@ class BadgeStudioController extends Controller
     public function sample(Request $request)
     {
         $this->guard();
-        return response()->json($this->sample((int)$request->query('id',0)));
+        return response()->json($this->sampleData((int)$request->query('id',0)));
     }
 
     private function fields(): array
@@ -87,7 +87,7 @@ class BadgeStudioController extends Controller
         ];
     }
 
-    private function sample(int $id = 0): array
+    private function sampleData(int $id = 0): array
     {
         $row = Schema::hasTable('colaboradores')
             ? DB::table('colaboradores')->when($id, fn($q)=>$q->where('id',$id))->orderBy('nome')->first()
