@@ -1,5 +1,5 @@
-Warning: truncated output (original token count: 30395)
-Total output lines: 1099
+Warning: truncated output (original token count: 30843)
+Total output lines: 1113
 
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
@@ -542,11 +542,16 @@ Total output lines: 1099
             </tbody></table></div>
             
         <?php elseif($p == 'configuracoes' && $isTI): ?>
-            <div class="d-flex justify-content-between align-items-center mb-4"…395 tokens truncated… ID','m365_client'=>'Client ID','m365_secret'=>'Secret (Client Secret)','m365_sku_basic'=>'SKU ID (Basic)'] as $k=>$l) { ?> <div class="mb-3"><label class="small fw-bold text-muted">{{ $l }}</label><input name="cfg[{{ $k }}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> <?php } ?>
-                                <label class="small fw-bold text-muted">Grupo Padrão M365 (API Graph)</label><select name="cfg[m365_grupo_padrao]" id="cfg_m365_grupo_padrao" class="form-select mb-3" data-current="{{ $cfg_global['m365_grupo_padrao'] ?? '' }}"><option value="">Carregando API...</option></select></div></div>
-                                <div class="col-md-6">
-                                    <div class="p-4 border rounded mb-4" style="background:var(--bg-body);"><h6 class="fw-bold mb-3" style="color:#25D366;"><i class="fa-brands fa-whatsapp d-inline me-2" style="color:#25D366;"></i>WhatsApp API (Meta)</h6><?php foreach(['wp_token'=>'Access Token Permanente','wp_phone_id'=>'Phone Number ID', 'wp_template'=>'Nome do Template de Disparo (OTP)'] as $k=>$l) { ?> <div class="mb-3"><label class="small fw-bold text-muted">{{ $l }}</label><input name="cfg[{{ $k }}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> <?php } ?></div>
-                                    <div class="p-4 border rounded" style="background:var(--bg-body);"><h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-envelope d-inline me-2" style="color:#ea4335;"></i>Servidor SMTP Corporativo</h6><div class="row g-2"><?php foreach(['smtp_host'=>'Host SMTP (Ex: smtp.office365.com)','smtp_port'=>'Porta','smtp_user'=>'Usuário','smtp_pass'=>'Senha','mail_from'=>'E-mail do Remetente Oficial', 'mail_from_name'=>'Nome do Remetente Oficial (Ex: ENFAS IAM)'] as $k=>$l) { ?> <div class="{{ ($k=='smtp_host'||$k=='mail_from'||$k=='mail_from_name')?'col-md-12':'col-md-6' }} mb-2"><label class="small fw-bold text-muted">{{$l}}</label><input name="cfg[{{$k}}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> <?php } ?></div></div>
+            <div class="d-flex justify-content-between align-items-center mb-4"…843 tokens truncated…">Phone Number ID</label><input name="cfg[wp_phone_id]" value="{{ $cfg_global['wp_phone_id'] ?? '' }}" class="form-control"></div>
+                                    <div class="mb-3"><label class="small fw-bold text-muted">Nome do Template de Disparo (OTP)</label><input name="cfg[wp_template]" value="{{ $cfg_global['wp_template'] ?? '' }}" class="form-control"></div></div>
+                                    <div class="p-4 border rounded" style="background:var(--bg-body);"><h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-envelope d-inline me-2" style="color:#ea4335;"></i>Servidor SMTP Corporativo</h6><div class="row g-2">
+                                    <div class="col-md-12 mb-2"><label class="small fw-bold text-muted">Host SMTP</label><input name="cfg[smtp_host]" value="{{ $cfg_global['smtp_host'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-6 mb-2"><label class="small fw-bold text-muted">Porta</label><input name="cfg[smtp_port]" value="{{ $cfg_global['smtp_port'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-6 mb-2"><label class="small fw-bold text-muted">Usuário</label><input name="cfg[smtp_user]" value="{{ $cfg_global['smtp_user'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-6 mb-2"><label class="small fw-bold text-muted">Senha</label><input name="cfg[smtp_pass]" value="{{ $cfg_global['smtp_pass'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-12 mb-2"><label class="small fw-bold text-muted">E-mail do Remetente Oficial</label><input name="cfg[mail_from]" value="{{ $cfg_global['mail_from'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-12 mb-2"><label class="small fw-bold text-muted">Nome do Remetente Oficial</label><input name="cfg[mail_from_name]" value="{{ $cfg_global['mail_from_name'] ?? '' }}" class="form-control"></div>
+                                    </div></div>
                                 </div>
                             </div>
                         </div>
