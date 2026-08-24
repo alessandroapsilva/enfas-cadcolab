@@ -41,6 +41,11 @@ jobs:
       - name: Laravel tests
         run: php artisan test
 
+      - name: Compile and validate Blade views
+        run: |
+          php artisan view:cache
+          find storage/framework/views -name '*.php' -print0 | xargs -0 -n1 php -l
+
       - name: Frontend build
         run: |
           npm install --no-audit --no-fund
