@@ -1,6 +1,7 @@
 <?php
 
 return [
+    'ui_mode' => env('CADCOLAB_UI_MODE', 'v3'),
     'version' => '5.0.0-beta.1',
     'groups' => [
         'overview' => [
