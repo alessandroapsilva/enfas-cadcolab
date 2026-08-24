@@ -15,6 +15,12 @@ class DashboardRouterController extends Controller
     {
         if (!session('admin_logado')) return redirect('/login');
 
+        // A interface v3 continua sendo a experiência oficial e completa.
+        // O shell v5 permanece disponível apenas para desenvolvimento controlado.
+        if (config('cadcolab_modules.ui_mode', 'v3') !== 'v5') {
+            return app(AdminController::class)->index($request);
+        }
+
         $page = (string) $request->query('p', 'dashboard');
         $role = $registry->role();
         $module = $registry->module($page, $role);
