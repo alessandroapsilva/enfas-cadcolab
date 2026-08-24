@@ -6,6 +6,11 @@ use Tests\TestCase;
 
 class CadcolabV5RegistryTest extends TestCase
 {
+    public function test_complete_v3_interface_is_the_safe_default(): void
+    {
+        $this->assertSame('v3', config('cadcolab_modules.ui_mode'));
+    }
+
     public function test_module_registry_has_unique_pages_and_valid_roles(): void
     {
         $groups = config('cadcolab_modules.groups', []);
