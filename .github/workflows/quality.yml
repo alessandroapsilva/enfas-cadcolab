@@ -44,7 +44,12 @@ jobs:
       - name: Compile and validate Blade views
         run: |
           php artisan view:cache
-          find storage/framework/views -name '*.php' -print0 | xargs -0 -n1 php -l
+          for view in storage/framework/views/*.php; do
+            if ! php -l "$view"; then
+              nl -ba "$view" | sed -n '520,565p'
+              exit 1
+            fi
+          done
 
       - name: Frontend build
         run: |
