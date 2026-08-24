@@ -87,7 +87,7 @@ Total output lines: 1102
         .timeline-date { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; font-weight: bold; }
         .timeline-content { background: var(--bg-card); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; }
     </style>
-    <link rel="stylesheet" href="/cadcolab-v3-plus.css?v=3.1.0">
+    <link rel="stylesheet" href="/cadcolab-v3-plus.css?v=3.1.1">
     <link rel="stylesheet" href="/cadcolab-intelligence.css?v=3.1.0">
 </head>
 <body>
@@ -712,7 +712,7 @@ Total output lines: 1102
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/cadcolab-enterprise.js?v=3.1.0" defer></script>
 <script src="/cadcolab-intelligence.js?v=3.1.0" defer></script>
-<script src="/cadcolab-v3-plus.js?v=3.1.0" defer></script>
+<script src="/cadcolab-v3-plus.js?v=3.1.1" defer></script>
 <script>
     function toggleTheme() { let html = document.documentElement; let currentTheme = html.getAttribute('data-theme'); let newTheme = currentTheme === 'light' ? 'dark' : 'light'; html.setAttribute('data-theme', newTheme); localStorage.setItem('enTheme', newTheme); }
     document.addEventListener('DOMContentLoaded', () => { 
