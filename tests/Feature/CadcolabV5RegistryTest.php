@@ -11,6 +11,20 @@ class CadcolabV5RegistryTest extends TestCase
         $this->assertSame('v3', config('cadcolab_modules.ui_mode'));
     }
 
+    public function test_v3_keeps_critical_features_and_loads_additive_enterprise_modules(): void
+    {
+        $view = file_get_contents(resource_path('views/admin.blade.php'));
+
+        foreach (['menuRH', 'menuSeg', 'menuRel', 'menuTI', 'modalEdicao', 'modalCSV', 'Identidade e Diretório (LDAP)'] as $feature) {
+            $this->assertStringContainsString($feature, $view);
+        }
+
+        $this->assertStringContainsString('/cadcolab-enterprise.js', $view);
+        $this->assertStringContainsString('/cadcolab-intelligence.js', $view);
+        $this->assertFileExists(public_path('cadcolab-v3-plus.css'));
+        $this->assertFileExists(public_path('cadcolab-v3-plus.js'));
+    }
+
     public function test_module_registry_has_unique_pages_and_valid_roles(): void
     {
         $groups = config('cadcolab_modules.groups', []);

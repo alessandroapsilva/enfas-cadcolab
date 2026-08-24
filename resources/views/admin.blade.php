@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 30413)
+Total output lines: 1102
+
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
 <head>
@@ -84,6 +87,8 @@
         .timeline-date { font-size: 11px; color: var(--text-muted); margin-bottom: 3px; font-weight: bold; }
         .timeline-content { background: var(--bg-card); padding: 12px 15px; border-radius: 8px; border: 1px solid var(--border-color); font-size: 13px; }
     </style>
+    <link rel="stylesheet" href="/cadcolab-v3-plus.css?v=3.1.0">
+    <link rel="stylesheet" href="/cadcolab-intelligence.css?v=3.1.0">
 </head>
 <body>
 
@@ -205,7 +210,7 @@
         </script>
     @endif
 
-<div class="sidebar">
+<div class="sidebar" id="cadcolabSidebar">
     <div class="text-center mb-4 mt-3">
         <a href="/dashboard" class="sidebar-logo">
             <div>
@@ -244,6 +249,7 @@
                 <a href="/dashboard?p=sistemas" class="nav-item <?=($p=='sistemas'?'active':'')?>"><i class="fa-solid fa-desktop" style="width:20px;"></i> <span>Aplicações Web SSO</span></a>
                 <a href="/dashboard?p=usuarios" class="nav-item <?=($p=='usuarios'?'active':'')?>"><i class="fa-solid fa-user-shield" style="width:20px;"></i> <span>Administradores</span></a>
                 <a href="/dashboard?p=configuracoes" class="nav-item <?=($p=='configuracoes'?'active':'')?>"><i class="fa-solid fa-sliders" style="width:20px;"></i> <span>Configurações Mestres</span></a>
+                <a href="/dashboard?p=configuracoes#identity-directory-settings" class="nav-item"><i class="fa-solid fa-address-card" style="width:20px;"></i> <span>Identidade e Diretório (LDAP)</span></a>
                 <a href="/dashboard?p=status" class="nav-item <?=($p=='status'?'active':'')?>"><i class="fa-solid fa-server" style="width:20px;"></i> <span>Status Cloud API</span></a>
                 <a href="/dashboard?p=erros" class="nav-item <?=($p=='erros'?'active':'')?> text-danger"><i class="fa-solid fa-triangle-exclamation" style="width:20px;"></i> <span>Painel de Erros</span></a>
             </div>
@@ -263,7 +269,7 @@
 <div class="main-wrapper">
     <div class="topbar">
         <div class="d-flex align-items-center">
-            <i class="fa-solid fa-bars me-3 fs-4" style="color:var(--primary); cursor:pointer;" id="sidebarToggle"></i>
+            <button type="button" class="btn btn-link p-0 me-3 fs-4" style="color:var(--primary);" id="sidebarToggle" aria-label="Abrir ou recolher menu" aria-controls="cadcolabSidebar" aria-expanded="true"><i class="fa-solid fa-bars"></i></button>
             <h5 class="m-0 fw-bold" style="color:var(--text-primary); text-transform: capitalize;">{{ str_replace('_', ' ', $p) }}</h5>
         </div>
         <div class="d-flex align-items-center gap-3">
@@ -535,21 +541,7 @@
                 @endforeach 
             @endif
             </tbody></table></div>
-            
-        <?php elseif($p == 'configuracoes' && $isTI): ?>
-            <div class="d-flex justify-content-between align-items-center mb-4"><h4><i class="fa-solid fa-gears text-primary me-2"></i> Configurações Mestres do Sistema</h4></div>
-            <form method="POST" action="/acao" onsubmit="this.querySelector('button').classList.add('btn-loading');">@csrf<input type="hidden" name="action" value="save_todas_configs">
-                <div class="table-card shadow-sm border-0">
-                    <ul class="nav nav-tabs mb-4 border-0" role="tablist">
-                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#cfg_apis" type="button">APIs de Comunicação</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cfg_google" type="button">Google Workspace</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cfg_iam" type="button">Governança IAM</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cfg_print" type="button">Layouts HTML e E-mails</button></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="cfg_apis">
-                            <div class="row g-4">
-                                <div class="col-md-6"><div class="p-4 border rounded h-100" style="background:var(--bg-body);"><h6 class="fw-bold mb-3 text-primary"><i class="fa-brands fa-microsoft d-inline me-2"></i>Microsoft 365 (Entra ID)</h6>@foreach(['m365_tenant'=>'Tenant ID','m365_client'=>'Client ID','m365_secret'=>'Secret (Client Secret)','m365_sku_basic'=>'SKU ID (Basic)'] as $k=>$l) <div class="mb-3"><label class="small fw-bold text-muted">{{ $l }}</label><input name="cfg[{{ $k }}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> @endforeach
+     …413 tokens truncated…></i>Microsoft 365 (Entra ID)</h6>@foreach(['m365_tenant'=>'Tenant ID','m365_client'=>'Client ID','m365_secret'=>'Secret (Client Secret)','m365_sku_basic'=>'SKU ID (Basic)'] as $k=>$l) <div class="mb-3"><label class="small fw-bold text-muted">{{ $l }}</label><input name="cfg[{{ $k }}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> @endforeach
                                 <label class="small fw-bold text-muted">Grupo Padrão M365 (API Graph)</label><select name="cfg[m365_grupo_padrao]" id="cfg_m365_grupo_padrao" class="form-select mb-3" data-current="{{ $cfg_global['m365_grupo_padrao'] ?? '' }}"><option value="">Carregando API...</option></select></div></div>
                                 <div class="col-md-6">
                                     <div class="p-4 border rounded mb-4" style="background:var(--bg-body);"><h6 class="fw-bold mb-3" style="color:#25D366;"><i class="fa-brands fa-whatsapp d-inline me-2" style="color:#25D366;"></i>WhatsApp API (Meta)</h6>@foreach(['wp_token'=>'Access Token Permanente','wp_phone_id'=>'Phone Number ID', 'wp_template'=>'Nome do Template de Disparo (OTP)'] as $k=>$l) <div class="mb-3"><label class="small fw-bold text-muted">{{ $l }}</label><input name="cfg[{{ $k }}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> @endforeach</div>
@@ -718,6 +710,9 @@
 <div class="modal fade" id="modalCargo" tabindex="-1"><div class="modal-dialog modal-dialog-centered"><div class="modal-content p-4"><form method="POST" action="/acao" onsubmit="this.querySelector('button').classList.add('btn-loading');">@csrf<input type="hidden" name="id" id="mc_id"><input type="hidden" name="table" value="cargos"><input type="hidden" name="action" value="save_generic"><h5 class="fw-bold mb-4 text-primary">Cadastro de Cargo (Função)</h5><p class="small text-muted mb-4">Ao atribuir um Perfil (Grupo de Acesso) a este cargo, todos os colaboradores desta função herdarão os acessos correspondentes no Autoatendimento.</p><div class="mb-3"><label class="small text-muted fw-bold">Nome do Cargo</label><input name="nome" id="mc_n" class="form-control" required></div><div class="mb-4"><label class="small text-muted fw-bold">Vincular Grupo de Acesso (Perfil IAM)</label><select name="perfil_id" id="mc_p" class="form-select" required><option value="">Selecione...</option>@foreach(DB::table('perfis_acesso')->get() as $pp) <option value="{{$pp->id}}">{{$pp->nome}}</option> @endforeach</select></div><button class="btn btn-primary w-100 py-2 fw-bold">Salvar Cargo</button></form></div></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="/cadcolab-enterprise.js?v=3.1.0" defer></script>
+<script src="/cadcolab-intelligence.js?v=3.1.0" defer></script>
+<script src="/cadcolab-v3-plus.js?v=3.1.0" defer></script>
 <script>
     function toggleTheme() { let html = document.documentElement; let currentTheme = html.getAttribute('data-theme'); let newTheme = currentTheme === 'light' ? 'dark' : 'light'; html.setAttribute('data-theme', newTheme); localStorage.setItem('enTheme', newTheme); }
     document.addEventListener('DOMContentLoaded', () => { 
@@ -733,8 +728,6 @@
         }
     });
     
-    document.getElementById('sidebarToggle').addEventListener('click', function() { document.querySelector('.sidebar').classList.toggle('collapsed'); document.querySelector('.main-wrapper').classList.toggle('expanded'); });
-
     function abrirModalSeguro(id) { 
         var el = document.getElementById(id); 
         if(el) { var m = bootstrap.Modal.getOrCreateInstance(el); m.show(); }

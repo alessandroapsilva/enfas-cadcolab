@@ -1,0 +1,17 @@
+/* CADCOLAB v3.1 — melhorias aditivas; preserva o layout e os fluxos da v3. */
+.cadcolab-enterprise-panel{background:var(--bg-card);border:1px solid var(--border-color);border-radius:12px;padding:25px;margin:0 0 25px;box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.cadcolab-enterprise-panel .ce-header{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:22px;padding-bottom:18px;border-bottom:1px solid var(--border-color)}
+.cadcolab-enterprise-panel .ce-title{font-size:19px;font-weight:800;margin:0;color:var(--text-primary)}
+.cadcolab-enterprise-panel .ce-subtitle{font-size:12px;color:var(--text-muted);margin-top:5px;line-height:1.5}
+.ce-eyebrow{display:block;color:var(--primary);font-size:10px;font-weight:900;letter-spacing:1.2px;margin-bottom:5px}
+.ce-status-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:22px}
+.ce-stat{background:var(--bg-body);border:1px solid var(--border-color);border-radius:10px;padding:15px 16px}
+.ce-stat strong{display:block;font-size:22px;color:var(--text-primary);line-height:1.1;margin-bottom:4px}.ce-stat span{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);font-weight:700}
+.ce-badge{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:7px 10px;font-size:10px;font-weight:800;border:1px solid var(--border-color);text-transform:uppercase}.ce-badge.ok{color:#10b981;border-color:rgba(16,185,129,.35);background:rgba(16,185,129,.08)}.ce-badge.warn{color:#f59e0b;border-color:rgba(245,158,11,.35);background:rgba(245,158,11,.08)}
+.ce-section-title{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--text-muted);font-weight:900;margin:22px 0 12px}.ce-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.ce-log-table{width:100%;font-size:12px;border-collapse:separate;border-spacing:0}.ce-log-table th{font-size:9px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-muted);border-bottom:1px solid var(--border-color);padding:11px 9px}.ce-log-table td{padding:12px 9px;border-bottom:1px solid var(--border-color);vertical-align:top;color:var(--text-primary)}
+.ce-log-status{font-size:9px;font-weight:800;text-transform:uppercase;border-radius:999px;padding:5px 8px;display:inline-block}.ce-log-status.sent{background:rgba(16,185,129,.12);color:#10b981}.ce-log-status.failed{background:rgba(239,68,68,.12);color:#ef4444}.ce-log-status.queued,.ce-log-status.sending{background:rgba(245,158,11,.12);color:#f59e0b}
+.cadcolab-menu-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+body.cadcolab-busy{cursor:progress}form[data-submitting="true"] button[type="submit"]{opacity:.72;pointer-events:none}
+@media(max-width:768px){.main-wrapper{margin-left:0;max-width:100%}.sidebar{transform:translateX(-100%)}.sidebar.mobile-open{transform:translateX(0)}.cadcolab-menu-backdrop.visible{display:block}.topbar{padding:0 14px}.topbar>.d-flex:last-child{gap:.45rem!important}.topbar .rounded-pill.px-3{padding-left:.5rem!important;padding-right:.5rem!important}.topbar .rounded-pill .text-end{display:none}.topbar>a.btn{padding-left:.65rem!important;padding-right:.65rem!important}.content-area{padding:18px 14px}.cadcolab-enterprise-panel{padding:18px}.cadcolab-enterprise-panel .ce-header{flex-direction:column}}
+@media(prefers-reduced-motion:reduce){.sidebar,.main-wrapper,.nav-item,.user-card,.conecta-card{transition:none!important}}
