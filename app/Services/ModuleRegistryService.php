@@ -11,12 +11,15 @@ class ModuleRegistryService
 
     public function role(): string
     {
-        $raw = strtolower(trim((string) session('admin_perfil', '')));
+        $raw = mb_strtolower(trim((string) session('admin_perfil', '')), 'UTF-8');
         return match (true) {
             str_contains($raw, 'admin') => 'admin',
             str_contains($raw, 'ti') => 'ti',
             str_contains($raw, 'rh') => 'rh',
-            default => 'rh',
+            str_contains($raw, 'gest') => 'gestor',
+            str_contains($raw, 'oper') => 'operador',
+            str_contains($raw, 'consult') => 'consulta',
+            default => 'consulta',
         };
     }
 

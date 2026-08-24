@@ -1,20 +1,20 @@
 <?php
 
 return [
-    'version' => '5.0.0-alpha',
+    'version' => '5.0.0-beta.1',
     'groups' => [
         'overview' => [
             'label' => 'Visão Geral',
             'icon' => 'fa-house',
             'modules' => [
-                'dashboard' => ['label' => 'Início', 'icon' => 'fa-house', 'roles' => ['admin','ti','rh']],
+                'dashboard' => ['label' => 'Início', 'icon' => 'fa-house', 'roles' => ['admin','ti','rh','gestor','operador','consulta']],
             ],
         ],
         'people' => [
             'label' => 'Pessoas & Estrutura',
             'icon' => 'fa-users',
             'modules' => [
-                'colaboradores' => ['label' => 'Colaboradores', 'icon' => 'fa-users', 'roles' => ['admin','ti','rh']],
+                'colaboradores' => ['label' => 'Colaboradores', 'icon' => 'fa-users', 'roles' => ['admin','ti','rh','gestor','operador','consulta']],
                 'unidades' => ['label' => 'Unidades', 'icon' => 'fa-building', 'roles' => ['admin','rh']],
                 'setores' => ['label' => 'Setores', 'icon' => 'fa-sitemap', 'roles' => ['admin','rh']],
                 'cargos' => ['label' => 'Cargos e Funções', 'icon' => 'fa-briefcase', 'roles' => ['admin','rh']],
@@ -61,7 +61,7 @@ return [
             'label' => 'Governança & Inteligência',
             'icon' => 'fa-chart-line',
             'modules' => [
-                'relatorios' => ['label' => 'Relatórios Enterprise', 'icon' => 'fa-chart-column', 'roles' => ['admin','ti','rh']],
+                'relatorios' => ['label' => 'Relatórios Enterprise', 'icon' => 'fa-chart-column', 'roles' => ['admin','ti','rh','gestor']],
                 'auditoria' => ['label' => 'Trilha de Auditoria', 'icon' => 'fa-file-shield', 'roles' => ['admin','ti']],
                 'insights' => ['label' => 'Insights & Recomendações', 'icon' => 'fa-wand-magic-sparkles', 'roles' => ['admin','ti'], 'virtual' => true],
                 'erros' => ['label' => 'Diagnósticos & Falhas', 'icon' => 'fa-triangle-exclamation', 'roles' => ['admin','ti']],
@@ -72,8 +72,8 @@ return [
             'icon' => 'fa-gears',
             'modules' => [
                 'configuracoes' => ['label' => 'Configurações Mestres', 'icon' => 'fa-sliders', 'roles' => ['admin','ti']],
-                'ajuda' => ['label' => 'Central de Ajuda', 'icon' => 'fa-circle-question', 'roles' => ['admin','ti','rh']],
-                'changelog' => ['label' => 'Notas de Versão', 'icon' => 'fa-clock-rotate-left', 'roles' => ['admin','ti','rh']],
+                'ajuda' => ['label' => 'Central de Ajuda', 'icon' => 'fa-circle-question', 'roles' => ['admin','ti','rh','gestor','operador','consulta']],
+                'changelog' => ['label' => 'Notas de Versão', 'icon' => 'fa-clock-rotate-left', 'roles' => ['admin','ti','rh','gestor','operador','consulta']],
             ],
         ],
     ],

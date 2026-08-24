@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Services\ModuleRegistryService;
 use App\Services\ReleaseNotesService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Arr;
 use Illuminate\View\View;
 
 class DashboardRouterController extends Controller
@@ -70,9 +72,38 @@ class DashboardRouterController extends Controller
                 'grupos' => 'perfis_acesso',
                 default => $page,
             };
+            $base['collectionFields'] = $this->collectionFields($base['tableName']);
+            $base['collectionRows'] = collect($base['dados']['regs'] ?? [])->mapWithKeys(function ($row) {
+                $safe = Arr::except((array) $row, ['senha','password','remember_token','identity_dn','ldap_dn']);
+                return isset($safe['id']) ? [(string) $safe['id'] => $safe] : [];
+            })->all();
+            $base['canManageCollection'] = in_array($role, ['admin','ti'], true)
+                || ($role === 'rh' && in_array($page, ['unidades','setores','cargos'], true));
         }
 
         return response()->view($view, $base)->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0');
+    }
+
+    private function collectionFields(string $table): array
+    {
+        if (! Schema::hasTable($table)) return [];
+
+        $labels = [
+            'nome'=>'Nome','email'=>'E-mail','usuario'=>'Usuário','senha'=>'Senha','perfil'=>'Perfil',
+            'endereco'=>'Endereço','telefone'=>'Telefone','responsavel'=>'Responsável','ramal'=>'Ramal',
+            'perfil_id'=>'Perfil de acesso','link'=>'Endereço da aplicação','descricao'=>'Descrição',
+            'ativo'=>'Ativo','url'=>'URL','sigla'=>'Sigla','codigo'=>'Código',
+        ];
+        $blocked = ['id','created_at','updated_at','identity_source','identity_dn','ldap_dn','last_login_at','pre_registro_id','remember_token'];
+
+        return collect(Schema::getColumnListing($table))
+            ->reject(fn ($column) => in_array($column, $blocked, true) || str_contains($column, 'secret') || str_contains($column, 'token'))
+            ->map(fn ($column) => [
+                'name'=>$column,
+                'label'=>$labels[$column] ?? str_replace('_', ' ', ucfirst($column)),
+                'type'=>$column === 'senha' ? 'password' : (in_array($column, ['email'], true) ? 'email' : 'text'),
+                'required'=>in_array($column, ['nome','usuario'], true),
+            ])->values()->all();
     }
 
     private function description(string $page): string

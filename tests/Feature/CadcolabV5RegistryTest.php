@@ -10,7 +10,7 @@ class CadcolabV5RegistryTest extends TestCase
     {
         $groups = config('cadcolab_modules.groups', []);
         $seen = [];
-        $validRoles = ['admin','ti','rh'];
+        $validRoles = ['admin','ti','rh','gestor','operador','consulta'];
 
         foreach ($groups as $group) {
             $this->assertNotEmpty($group['label'] ?? null);
@@ -26,6 +26,24 @@ class CadcolabV5RegistryTest extends TestCase
         foreach (['dashboard','colaboradores','configuracoes','relatorios','auditoria','changelog','badge-studio','identity-directory'] as $required) {
             $this->assertContains($required, $seen, "Módulo obrigatório ausente: {$required}");
         }
+    }
+
+    public function test_unknown_and_operational_profiles_are_never_promoted_to_rh(): void
+    {
+        $registry = app(\App\Services\ModuleRegistryService::class);
+
+        session(['admin_perfil' => 'Operador']);
+        $this->assertSame('operador', $registry->role());
+        $this->assertFalse($registry->canAccess('configuracoes'));
+
+        session(['admin_perfil' => 'Perfil desconhecido']);
+        $this->assertSame('consulta', $registry->role());
+        $this->assertFalse($registry->canAccess('usuarios'));
+    }
+
+    public function test_dashboard_requires_an_authenticated_corporate_session(): void
+    {
+        $this->get('/dashboard')->assertRedirect('/login');
     }
 
     public function test_v5_shell_assets_and_views_exist(): void

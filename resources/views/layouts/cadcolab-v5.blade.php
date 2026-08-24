@@ -35,7 +35,7 @@
     <div class="v5-main">
         <header class="v5-topbar">
             <div class="v5-title-wrap"><button type="button" id="mobileMenu" aria-label="Abrir menu"><i class="fa-solid fa-bars"></i></button><div><small>{{ $module['group_label'] ?? 'CADCOLAB' }}</small><h1>{{ $module['label'] ?? 'CADCOLAB' }}</h1><p>{{ $module['description'] ?? 'Gestão integrada de pessoas, identidades, acessos e integrações.' }}</p></div></div>
-            <div class="v5-user"><span><i class="fa-regular fa-circle-user"></i>{{ session('admin_nome') ?: session('admin_usuario') ?: 'Administrador' }}</span><a href="/logout"><i class="fa-solid fa-arrow-right-from-bracket"></i>Sair</a></div>
+            <div class="v5-user"><span><i class="fa-regular fa-circle-user"></i>{{ session('admin_nome') ?: session('admin_usuario') ?: 'Administrador' }}</span><form method="POST" action="/logout">@csrf<button class="v5-logout" type="submit" style="display:inline-flex;align-items:center;gap:7px;border:1px solid var(--v5-border);background:transparent;color:var(--v5-muted);border-radius:9px;padding:7px 10px;cursor:pointer"><i class="fa-solid fa-arrow-right-from-bracket"></i>Sair</button></form></div>
         </header>
         <main class="v5-content">
             @if(session('swal'))<div class="v5-alert success"><i class="fa-solid fa-circle-check"></i>{{ session('swal') }}</div>@endif

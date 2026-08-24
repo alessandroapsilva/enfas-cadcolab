@@ -26,7 +26,8 @@ class CorporateAuthController extends Controller
                     $this->directory->persistUser($ldapUser);
                     $admin = DB::table('usuarios_admin')->where('usuario',$ldapUser['username'])->first();
                     if ($admin && ($admin->ativo ?? true)) {
-                        session(['admin_logado'=>true,'admin_perfil'=>$admin->perfil,'admin_nome'=>$admin->nome,'admin_id'=>$admin->id,'identity_source'=>'ldap']);
+                        $request->session()->regenerate();
+                        $request->session()->put(['admin_logado'=>true,'admin_perfil'=>$admin->perfil,'admin_nome'=>$admin->nome,'admin_id'=>$admin->id,'identity_source'=>'ldap']);
                         return redirect('/dashboard');
                     }
                 }
@@ -38,8 +39,8 @@ class CorporateAuthController extends Controller
         if (!config('identity.local_fallback')) return back()->withInput($request->only('u'))->with('erro','Credenciais inválidas.');
         $admin = DB::table('usuarios_admin')->where('usuario',$c['u'])->first();
         if ($admin && ($admin->identity_source ?? 'local')==='local' && ($admin->ativo ?? true) && Hash::check($c['p'],$admin->senha)) {
-            if ($admin->usuario==='admin' && Hash::check('Enfas@2026',$admin->senha)) return back()->with('erro','A conta administrativa legada precisa ter a senha redefinida antes do uso.');
-            session(['admin_logado'=>true,'admin_perfil'=>$admin->perfil,'admin_nome'=>$admin->nome,'admin_id'=>$admin->id,'identity_source'=>'local']);
+            $request->session()->regenerate();
+            $request->session()->put(['admin_logado'=>true,'admin_perfil'=>$admin->perfil,'admin_nome'=>$admin->nome,'admin_id'=>$admin->id,'identity_source'=>'local']);
             return redirect('/dashboard');
         }
         return back()->withInput($request->only('u'))->with('erro','Credenciais inválidas.');

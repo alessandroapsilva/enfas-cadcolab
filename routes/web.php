@@ -14,11 +14,13 @@ use App\Http\Controllers\IdentityDirectoryController;
 use App\Http\Controllers\ReleaseNotesController;
 
 Route::get('/', fn () => redirect('/login'));
+Route::get('/login', [CorporateAuthController::class, 'login']);
+Route::post('/login', [CorporateAuthController::class, 'login'])->middleware('throttle:5,1');
+
+Route::middleware('corporate.auth')->group(function () {
 Route::get('/dashboard', [DashboardRouterController::class, 'index']);
 Route::post('/acao', [ActionRouterController::class, 'handle']);
-Route::get('/login', [CorporateAuthController::class, 'login']);
-Route::post('/login', [CorporateAuthController::class, 'login']);
-Route::get('/logout', [CorporateAuthController::class, 'logout']);
+Route::match(['get', 'post'], '/logout', [CorporateAuthController::class, 'logout']);
 
 Route::prefix('enterprise-settings')->group(function () {
     Route::get('/identity', [EnterpriseSettingsController::class, 'identity']);
@@ -45,6 +47,9 @@ Route::prefix('identity-directory')->group(function () {
     Route::post('/test', [IdentityDirectoryController::class, 'test']);
     Route::post('/sync', [IdentityDirectoryController::class, 'sync']);
 });
+Route::post('/sync-assinatura', [AdminController::class, 'syncAssinatura']);
+Route::post('/acao/sync-assinatura', fn () => response()->json(['success'=>false,'message'=>'⚠️ Microsoft descontinuou a API de assinatura. Configure manualmente no Outlook Web.']));
+});
 
 Route::any('/Conta/Login', [AutoatendimentoController::class, 'index']);
 Route::any('/Conta/Logout', [AutoatendimentoController::class, 'doLogout']);
@@ -54,5 +59,3 @@ Route::any('/User/ResetPassword', [AutoatendimentoController::class, 'index']);
 Route::any('/User/Validate', [AutoatendimentoController::class, 'index']);
 Route::any('/User/NewPassword', [AutoatendimentoController::class, 'index']);
 Route::any('/User/NewUser', [AutoatendimentoController::class, 'index']);
-Route::post('/sync-assinatura', [AdminController::class, 'syncAssinatura']);
-Route::post('/acao/sync-assinatura', fn () => response()->json(['success'=>false,'message'=>'⚠️ Microsoft descontinuou a API de assinatura. Configure manualmente no Outlook Web.']));
