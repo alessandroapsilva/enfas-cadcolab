@@ -131,6 +131,8 @@
     function refinePhotos(){ qsa('.uc-avatar img').forEach(img=>{img.loading='lazy';img.decoding='async';}); }
 
     document.addEventListener('DOMContentLoaded',()=>{
-        buildEnterpriseNavigation(); polishTopbar(); polishDashboard(); refinePhotos(); loadIdentityPanel(); loadCommunicationAudit();
+        // A v3 continua dona da navegação e do visual. Esta camada apenas
+        // acrescenta integrações que não existiam na interface original.
+        refinePhotos(); loadIdentityPanel(); loadCommunicationAudit();
     });
 })();

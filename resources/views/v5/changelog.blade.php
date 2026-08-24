@@ -1,0 +1,5 @@
+@extends('layouts.cadcolab-v5')
+@section('content')
+<div class="v5-card"><div class="v5-section-head"><div><h2>Release Center</h2><small style="color:var(--v5-muted)">Histórico consolidado de versões, melhorias, correções e mudanças de arquitetura.</small></div><span class="v5-badge">Atual: v{{ $versions[0]['version'] ?? $cadcolabVersion }}</span></div></div>
+<div class="v5-section" style="display:grid;gap:12px">@foreach($versions as $release)<article class="v5-card"><div style="display:flex;justify-content:space-between;gap:15px"><div><span class="v5-badge">v{{ $release['version'] }}</span><h3 style="margin:10px 0 4px">{{ $release['title'] }}</h3><p style="margin:0;color:var(--v5-muted);font-size:11px">{{ $release['summary'] }}</p></div><small style="color:var(--v5-muted)">{{ $release['date'] }}</small></div><ul style="margin:14px 0 0;padding-left:18px;color:#cbd6e8;font-size:11px;line-height:1.8">@foreach($release['items'] ?? [] as $item)<li>{{ $item }}</li>@endforeach</ul></article>@endforeach</div>
+@endsection

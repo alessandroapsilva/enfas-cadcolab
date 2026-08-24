@@ -1,3 +1,6 @@
+Warning: truncated output (original token count: 30843)
+Total output lines: 1113
+
 <!DOCTYPE html>
 <html lang="pt-BR" data-theme="dark">
 <head>
@@ -52,6 +55,8 @@
         /* LAYOUT DE CARDS NA TELA DE COLABORADORES */
         .user-card { background: var(--bg-card); border-radius: 12px; border: 1px solid var(--border-color); padding: 20px 20px 0 20px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); transition: 0.2s; position: relative; border-left: 4px solid var(--primary);}
         .user-card:hover { transform: translateY(-3px); box-shadow: 0 8px 20px rgba(0,0,0,0.3); }
+        .uc-avatar { width: 58px; height: 58px; min-width: 58px; max-width: 58px; overflow: hidden; border-radius: 50%; }
+        .uc-avatar img { width: 58px !important; height: 58px !important; max-width: 58px !important; max-height: 58px !important; object-fit: cover !important; border-radius: 50% !important; }
         .uc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px dashed var(--border-color); }
         
         .uc-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 20px; }
@@ -421,8 +426,8 @@
             </div>
             
             <div class="row">
-                @if(!empty($dados['colabs']) && count($dados['colabs']) > 0) 
-                    @foreach($dados['colabs'] as $r) 
+                <?php if(!empty($dados['colabs']) && count($dados['colabs']) > 0) { ?>
+                    <?php foreach($dados['colabs'] as $r) { ?>
                         @php 
                             $id_exibicao = !empty($r['public_id']) ? $r['public_id'] : str_pad($r['id'], 6, '0', STR_PAD_LEFT); 
                             $hoje = date('Y-m-d'); $idade = '-'; 
@@ -518,10 +523,10 @@
                                 </div>
                             </div>
                         </div>
-                    @endforeach
-                @else 
+                    <?php } ?>
+                <?php } else { ?>
                     <div class="col-12 text-center py-5 text-muted">Nenhum colaborador encontrado com os filtros informados.</div> 
-                @endif
+                <?php } ?>
             </div>
             
         <?php elseif(in_array($p, ['unidades','setores','cargos','perfis','sistemas', 'usuarios', 'grupos'])): $t = $p; if($p == 'sistemas') $t = 'sistemas_hc'; if($p == 'perfis' || $p == 'grupos') $t = 'perfis_acesso'; if($p == 'usuarios') $t = 'usuarios_admin'; $titulo = ucfirst($p); ?>
@@ -537,23 +542,16 @@
             </tbody></table></div>
             
         <?php elseif($p == 'configuracoes' && $isTI): ?>
-            <div class="d-flex justify-content-between align-items-center mb-4"><h4><i class="fa-solid fa-gears text-primary me-2"></i> Configurações Mestres do Sistema</h4></div>
-            <form method="POST" action="/acao" onsubmit="this.querySelector('button').classList.add('btn-loading');">@csrf<input type="hidden" name="action" value="save_todas_configs">
-                <div class="table-card shadow-sm border-0">
-                    <ul class="nav nav-tabs mb-4 border-0" role="tablist">
-                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#cfg_apis" type="button">APIs de Comunicação</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cfg_google" type="button">Google Workspace</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cfg_iam" type="button">Governança IAM</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#cfg_print" type="button">Layouts HTML e E-mails</button></li>
-                    </ul>
-                    <div class="tab-content">
-                        <div class="tab-pane fade show active" id="cfg_apis">
-                            <div class="row g-4">
-                                <div class="col-md-6"><div class="p-4 border rounded h-100" style="background:var(--bg-body);"><h6 class="fw-bold mb-3 text-primary"><i class="fa-brands fa-microsoft d-inline me-2"></i>Microsoft 365 (Entra ID)</h6>@foreach(['m365_tenant'=>'Tenant ID','m365_client'=>'Client ID','m365_secret'=>'Secret (Client Secret)','m365_sku_basic'=>'SKU ID (Basic)'] as $k=>$l) <div class="mb-3"><label class="small fw-bold text-muted">{{ $l }}</label><input name="cfg[{{ $k }}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> @endforeach
-                                <label class="small fw-bold text-muted">Grupo Padrão M365 (API Graph)</label><select name="cfg[m365_grupo_padrao]" id="cfg_m365_grupo_padrao" class="form-select mb-3" data-current="{{ $cfg_global['m365_grupo_padrao'] ?? '' }}"><option value="">Carregando API...</option></select></div></div>
-                                <div class="col-md-6">
-                                    <div class="p-4 border rounded mb-4" style="background:var(--bg-body);"><h6 class="fw-bold mb-3" style="color:#25D366;"><i class="fa-brands fa-whatsapp d-inline me-2" style="color:#25D366;"></i>WhatsApp API (Meta)</h6>@foreach(['wp_token'=>'Access Token Permanente','wp_phone_id'=>'Phone Number ID', 'wp_template'=>'Nome do Template de Disparo (OTP)'] as $k=>$l) <div class="mb-3"><label class="small fw-bold text-muted">{{ $l }}</label><input name="cfg[{{ $k }}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> @endforeach</div>
-                                    <div class="p-4 border rounded" style="background:var(--bg-body);"><h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-envelope d-inline me-2" style="color:#ea4335;"></i>Servidor SMTP Corporativo</h6><div class="row g-2">@foreach(['smtp_host'=>'Host SMTP (Ex: smtp.office365.com)','smtp_port'=>'Porta','smtp_user'=>'Usuário','smtp_pass'=>'Senha','mail_from'=>'E-mail do Remetente Oficial', 'mail_from_name'=>'Nome do Remetente Oficial (Ex: ENFAS IAM)'] as $k=>$l) <div class="{{ ($k=='smtp_host'||$k=='mail_from'||$k=='mail_from_name')?'col-md-12':'col-md-6' }} mb-2"><label class="small fw-bold text-muted">{{$l}}</label><input name="cfg[{{$k}}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> @endforeach</div></div>
+            <div class="d-flex justify-content-between align-items-center mb-4"…843 tokens truncated…">Phone Number ID</label><input name="cfg[wp_phone_id]" value="{{ $cfg_global['wp_phone_id'] ?? '' }}" class="form-control"></div>
+                                    <div class="mb-3"><label class="small fw-bold text-muted">Nome do Template de Disparo (OTP)</label><input name="cfg[wp_template]" value="{{ $cfg_global['wp_template'] ?? '' }}" class="form-control"></div></div>
+                                    <div class="p-4 border rounded" style="background:var(--bg-body);"><h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-envelope d-inline me-2" style="color:#ea4335;"></i>Servidor SMTP Corporativo</h6><div class="row g-2">
+                                    <div class="col-md-12 mb-2"><label class="small fw-bold text-muted">Host SMTP</label><input name="cfg[smtp_host]" value="{{ $cfg_global['smtp_host'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-6 mb-2"><label class="small fw-bold text-muted">Porta</label><input name="cfg[smtp_port]" value="{{ $cfg_global['smtp_port'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-6 mb-2"><label class="small fw-bold text-muted">Usuário</label><input name="cfg[smtp_user]" value="{{ $cfg_global['smtp_user'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-6 mb-2"><label class="small fw-bold text-muted">Senha</label><input name="cfg[smtp_pass]" value="{{ $cfg_global['smtp_pass'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-12 mb-2"><label class="small fw-bold text-muted">E-mail do Remetente Oficial</label><input name="cfg[mail_from]" value="{{ $cfg_global['mail_from'] ?? '' }}" class="form-control"></div>
+                                    <div class="col-md-12 mb-2"><label class="small fw-bold text-muted">Nome do Remetente Oficial</label><input name="cfg[mail_from_name]" value="{{ $cfg_global['mail_from_name'] ?? '' }}" class="form-control"></div>
+                                    </div></div>
                                 </div>
                             </div>
                         </div>
@@ -579,7 +577,7 @@
                     <button class="btn btn-primary btn-lg mt-4 w-100 fw-bold shadow">Salvar Todas as Configurações</button>
                 </div>
             </form>
-        @endif
+        <?php endif; ?>
     </div>
 </div>
 
@@ -732,7 +730,6 @@
             });
         }
     });
-    
     document.getElementById('sidebarToggle').addEventListener('click', function() { document.querySelector('.sidebar').classList.toggle('collapsed'); document.querySelector('.main-wrapper').classList.toggle('expanded'); });
 
     function abrirModalSeguro(id) { 

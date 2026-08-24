@@ -8,10 +8,28 @@ class ReleaseNotesService
     {
         return [
             [
+                'version' => '5.0.0-beta.1',
+                'date' => '24/08/2026',
+                'title' => 'Unified Enterprise Platform',
+                'type' => 'current',
+                'summary' => 'Consolidação do CADCOLAB em um shell único, seguro e modular, sem elevação indevida de perfis nem dependência da navegação legada.',
+                'items' => [
+                    'Autenticação corporativa protegendo todas as rotas administrativas e APIs internas.',
+                    'Perfis Admin, TI, RH, Gestor, Operador e Consulta normalizados sem fallback permissivo.',
+                    'Sidebar única em acordeão, modo compacto persistente, busca de módulos e experiência mobile.',
+                    'CRUD de estruturas corporativas liberado no shell v5 com edição em modal.',
+                    'Ações administrativas validadas por perfil e tabelas permitidas.',
+                    'Dados de senha e identidade removidos das grades e payloads de edição.',
+                    'Dashboard, colaboradores, LDAP, Badge Studio, relatórios, auditoria, insights e configurações no layout unificado.',
+                    'Proteção contra conteúdo HTML não confiável nos módulos de insights e auditoria de e-mail.',
+                    'Sessão regenerada após autenticação LDAP ou local e logout protegido por CSRF.',
+                ],
+            ],
+            [
                 'version' => '4.3.4',
                 'date' => '23/08/2026',
                 'title' => 'Global Stability & Navigation Recovery',
-                'type' => 'current',
+                'type' => 'fix',
                 'summary' => 'Estabilização global do painel legado com navegação server-side confiável e recuperação automática de estados de carregamento.',
                 'items' => [
                     'Navegação experimental SPA desativada no painel legado; links voltam a ser server-side e previsíveis.',
