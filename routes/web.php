@@ -29,3 +29,5 @@ Route::post('/acao/sync-assinatura', function() {
         'message' => '⚠️ Microsoft descontinuou a API de assinatura. Configure manualmente no Outlook Web.'
     ]);
 });
+
+Route::post('/configuracoes/testar-email', [App\Http\Controllers\TesteEmailController::class, 'enviar'])->middleware('throttle:5,1');
