@@ -553,7 +553,38 @@
                                 <label class="small fw-bold text-muted">Grupo Padrão M365 (API Graph)</label><select name="cfg[m365_grupo_padrao]" id="cfg_m365_grupo_padrao" class="form-select mb-3" data-current="{{ $cfg_global['m365_grupo_padrao'] ?? '' }}"><option value="">Carregando API...</option></select></div></div>
                                 <div class="col-md-6">
                                     <div class="p-4 border rounded mb-4" style="background:var(--bg-body);"><h6 class="fw-bold mb-3" style="color:#25D366;"><i class="fa-brands fa-whatsapp d-inline me-2" style="color:#25D366;"></i>WhatsApp API (Meta)</h6>@foreach(['wp_token'=>'Access Token Permanente','wp_phone_id'=>'Phone Number ID', 'wp_template'=>'Nome do Template de Disparo (OTP)'] as $k=>$l) <div class="mb-3"><label class="small fw-bold text-muted">{{ $l }}</label><input name="cfg[{{ $k }}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> @endforeach</div>
-                                    <div class="p-4 border rounded" style="background:var(--bg-body);"><h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-envelope d-inline me-2" style="color:#ea4335;"></i>Servidor SMTP Corporativo</h6><div class="row g-2">@foreach(['smtp_host'=>'Host SMTP (Ex: smtp.office365.com)','smtp_port'=>'Porta','smtp_user'=>'Usuário','smtp_pass'=>'Senha','mail_from'=>'E-mail do Remetente Oficial', 'mail_from_name'=>'Nome do Remetente Oficial (Ex: ENFAS IAM)'] as $k=>$l) <div class="{{ ($k=='smtp_host'||$k=='mail_from'||$k=='mail_from_name')?'col-md-12':'col-md-6' }} mb-2"><label class="small fw-bold text-muted">{{$l}}</label><input name="cfg[{{$k}}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> @endforeach</div></div>
+                                    <div class="p-4 border rounded" style="background:var(--bg-body);"><h6 class="fw-bold mb-3 text-danger"><i class="fa-solid fa-envelope d-inline me-2" style="color:#ea4335;"></i>Servidor SMTP Corporativo</h6><div class="row g-2">@foreach(['smtp_host'=>'Host SMTP (Ex: smtp.office365.com)','smtp_port'=>'Porta','smtp_user'=>'Usuário','smtp_pass'=>'Senha','mail_from'=>'E-mail do Remetente Oficial', 'mail_from_name'=>'Nome do Remetente Oficial (Ex: ENFAS IAM)'] as $k=>$l) <div class="{{ ($k=='smtp_host'||$k=='mail_from'||$k=='mail_from_name')?'col-md-12':'col-md-6' }} mb-2"><label class="small fw-bold text-muted">{{$l}}</label><input name="cfg[{{$k}}]" value="{{ $cfg_global[$k] ?? '' }}" class="form-control"></div> @endforeach</div>
+                                        <button type="button" class="btn btn-outline-primary mt-3" data-bs-toggle="modal" data-bs-target="#modalTesteEmailCadcolab"><i class="fa-solid fa-paper-plane me-1"></i> Testar e-mail SMTP</button>
+                                        <small class="d-block text-muted mt-2">Salve as configurações antes de testar. O teste usa os dados SMTP salvos.</small>
+                                    </div>
+                                    <div class="modal fade" id="modalTesteEmailCadcolab" tabindex="-1" aria-labelledby="tituloTesteEmailCadcolab" aria-hidden="true">
+                                      <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+                                        <div class="modal-header"><h5 class="modal-title" id="tituloTesteEmailCadcolab">Enviar e-mail de teste</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button></div>
+                                        <div class="modal-body"><label for="destinoTesteEmailCadcolab" class="form-label">E-mail de destino</label><input type="email" id="destinoTesteEmailCadcolab" class="form-control" placeholder="exemplo@dominio.com" maxlength="254" autocomplete="email"><div id="resultadoTesteEmailCadcolab" class="small mt-3" role="status" aria-live="polite"></div></div>
+                                        <div class="modal-footer"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button><button type="button" class="btn btn-primary" id="enviarTesteEmailCadcolab" onclick="enviarTesteEmailCadcolab()">Enviar teste</button></div>
+                                      </div></div>
+                                    </div>
+                                    <script>
+                                    async function enviarTesteEmailCadcolab() {
+                                        const input = document.getElementById('destinoTesteEmailCadcolab');
+                                        const result = document.getElementById('resultadoTesteEmailCadcolab');
+                                        const button = document.getElementById('enviarTesteEmailCadcolab');
+                                        if (!input.checkValidity() || !input.value.trim()) { input.reportValidity(); return; }
+                                        button.disabled = true; result.textContent = 'Enviando teste...';
+                                        try {
+                                            const response = await fetch('/configuracoes/testar-email', {
+                                                method: 'POST',
+                                                credentials: 'same-origin',
+                                                headers: {'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': @json(csrf_token())},
+                                                body: JSON.stringify({destinatario: input.value.trim()})
+                                            });
+                                            const data = await response.json();
+                                            result.textContent = data.message || (response.ok ? 'Teste enviado.' : 'Não foi possível enviar.');
+                                            result.className = response.ok ? 'small mt-3 text-success' : 'small mt-3 text-danger';
+                                        } catch (e) { result.textContent = 'Erro de comunicação. Tente novamente.'; result.className = 'small mt-3 text-danger'; }
+                                        finally { button.disabled = false; }
+                                    }
+                                    </script>
                                 </div>
                             </div>
                         </div>
